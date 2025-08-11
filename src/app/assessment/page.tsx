@@ -967,7 +967,7 @@ function AssessmentPage() {
                       >
                         <CardHeader className="flex-1 p-4 bg-primary/5">
                           <CardTitle className="text-base font-semibold truncate">
-                            {session.analyzedJd.JobCode && session.analyzedJd.JobCode !== 'Not Found' ? `${session.analyzedJd.JobCode} - ` : ''}
+                            {session.analyzedJd.PositionNumber && session.analyzedJd.PositionNumber !== 'Not Found' ? `${session.analyzedJd.PositionNumber} - ` : ''}
                             {session.analyzedJd.JobTitle || session.jdName}
                           </CardTitle>
                           <CardDescription className="flex items-center gap-1.5 text-xs pt-1">
@@ -976,6 +976,7 @@ function AssessmentPage() {
                         </CardHeader>
                         <CardContent className="p-4 flex-1">
                            <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
+                                {session.analyzedJd.JobCode && session.analyzedJd.JobCode !== 'Not Found' && <Badge variant="secondary">{session.analyzedJd.JobCode}</Badge>}
                                 {session.analyzedJd.Department && session.analyzedJd.Department !== 'Not Found' && <Badge variant="secondary">{session.analyzedJd.Department}</Badge>}
                                 {session.analyzedJd.PayGrade && session.analyzedJd.PayGrade !== 'Not Found' && <Badge variant="secondary">Grade {session.analyzedJd.PayGrade}</Badge>}
                             </div>
