@@ -1,4 +1,3 @@
-
 "use client";
 
 import { AccordionContent, AccordionItem } from "@/components/ui/accordion";
@@ -58,7 +57,7 @@ export default function CandidateCard({ candidate, isStale, isSelected, onToggle
   const recommendationInfo = getRecommendationInfo(analysis.recommendation);
 
   return (
-    <AccordionItem value={analysis.candidateName}>
+    <AccordionItem value={analysis.candidateName} className="border rounded-lg overflow-hidden bg-card shadow-sm">
         <AccordionPrimitive.Header className="flex w-full items-center">
             <div
                 className="pl-4 py-4 cursor-pointer"
@@ -73,7 +72,7 @@ export default function CandidateCard({ candidate, isStale, isSelected, onToggle
                     aria-label={`Select candidate ${analysis.candidateName}`}
                 />
             </div>
-            <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between p-4 font-medium transition-all hover:no-underline data-[state=open]:bg-accent/10">
+            <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between p-4 font-medium transition-all hover:no-underline data-[state=open]:bg-muted/50">
                 <div className="flex items-center gap-3 flex-wrap">
                     <span className="font-semibold text-lg text-foreground truncate">{analysis.candidateName}</span>
                      <Badge className={cn("whitespace-nowrap font-bold", getScoreBadgeClass(analysis.alignmentScore))}>
@@ -124,7 +123,7 @@ export default function CandidateCard({ candidate, isStale, isSelected, onToggle
                         </div>
                     </Badge>
                 </div>
-                <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 data-[state=open]:rotate-180" />
+                <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 text-muted-foreground data-[state=open]:rotate-180" />
             </AccordionPrimitive.Trigger>
             <Button
                 variant="ghost"
@@ -136,32 +135,32 @@ export default function CandidateCard({ candidate, isStale, isSelected, onToggle
                 <Trash2 className="h-4 w-4" />
             </Button>
         </AccordionPrimitive.Header>
-      <AccordionContent className="p-4 bg-muted/30 rounded-b-md border-t">
-        <div className="space-y-6">
+      <AccordionContent className="p-6 bg-muted/30 border-t">
+        <div className="space-y-8">
           <div>
-            <h4 className="font-semibold mb-2 flex items-center"><ClipboardCheck className="w-4 h-4 mr-2 text-primary"/> Alignment Details</h4>
+            <h4 className="font-semibold mb-3 flex items-center text-base"><ClipboardCheck className="w-5 h-5 mr-2 text-primary"/> Alignment Details</h4>
             <p className="text-sm text-foreground/80 whitespace-pre-wrap mb-4">{analysis.alignmentSummary}</p>
             <AlignmentTable details={analysis.alignmentDetails} />
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-semibold mb-2 flex items-center"><ThumbsUp className="w-4 h-4 mr-2 text-primary"/> Strengths</h4>
-              <ul className="list-disc list-outside pl-5 space-y-1 text-sm text-muted-foreground">
-                {analysis.strengths.map((s, i) => <li key={`strength-${i}`} className="text-foreground">{s}</li>)}
+              <h4 className="font-semibold mb-3 flex items-center text-base"><ThumbsUp className="w-5 h-5 mr-2 text-primary"/> Strengths</h4>
+              <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
+                {analysis.strengths.map((s, i) => <li key={`strength-${i}`} className="text-foreground/90">{s}</li>)}
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-2 flex items-center"><ThumbsDown className="w-4 h-4 mr-2 text-destructive"/> Weaknesses</h4>
-              <ul className="list-disc list-outside pl-5 space-y-1 text-sm text-muted-foreground">
-                {analysis.weaknesses.map((w, i) => <li key={`weakness-${i}`} className="text-foreground">{w}</li>)}
+              <h4 className="font-semibold mb-3 flex items-center text-base"><ThumbsDown className="w-5 h-5 mr-2 text-destructive"/> Weaknesses</h4>
+              <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
+                {analysis.weaknesses.map((w, i) => <li key={`weakness-${i}`} className="text-foreground/90">{w}</li>)}
               </ul>
             </div>
           </div>
           <div>
-            <h4 className="font-semibold mb-2 flex items-center"><Lightbulb className="w-4 h-4 mr-2 text-accent"/> Interview Probes</h4>
-            <ul className="list-disc list-outside pl-5 space-y-1 text-sm text-muted-foreground">
-              {analysis.interviewProbes.map((p, i) => <li key={`probe-${i}`} className="text-foreground">{p}</li>)}
+            <h4 className="font-semibold mb-3 flex items-center text-base"><Lightbulb className="w-5 h-5 mr-2 text-accent"/> Interview Probes</h4>
+            <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
+              {analysis.interviewProbes.map((p, i) => <li key={`probe-${i}`} className="text-foreground/90">{p}</li>)}
             </ul>
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -126,21 +125,26 @@ export function Header({
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Bot className="w-6 h-6 text-primary" />
+                <div className="p-2 bg-primary text-primary-foreground rounded-lg">
+                  <Bot className="w-6 h-6" />
                 </div>
-                <h1 className="text-lg font-bold text-foreground hidden sm:block">Jiggar</h1>
+                <h1 className="text-xl font-bold text-foreground hidden sm:block">Jiggar</h1>
             </Link>
         </div>
         
-        <div className="flex items-center gap-1 sm:gap-2">
-            <TooltipProvider>
-                {navItems.map(item => (
-                    <Tooltip key={item.page}>
+        <nav className="flex items-center gap-1 sm:gap-2 p-1 bg-muted rounded-full">
+            {navItems.map(item => (
+                <TooltipProvider key={item.page}>
+                    <Tooltip>
                         <TooltipTrigger asChild>
                             <Link href={item.href}>
-                                <Button variant="ghost" size="icon" className={cn(currentPage === item.page && 'bg-primary/10 text-primary')}>
-                                    <item.icon className="h-5 w-5" />
+                                <Button 
+                                    variant={currentPage === item.page ? 'default' : 'ghost'} 
+                                    size="sm" 
+                                    className={cn("rounded-full px-4", currentPage === item.page && 'shadow-sm')}
+                                >
+                                    <item.icon className="h-4 w-4 mr-2" />
+                                    {item.label}
                                 </Button>
                             </Link>
                         </TooltipTrigger>
@@ -148,9 +152,11 @@ export function Header({
                             <p>{item.label}</p>
                         </TooltipContent>
                     </Tooltip>
-                ))}
-            </TooltipProvider>
+                </TooltipProvider>
+            ))}
+        </nav>
 
+        <div className="flex items-center gap-2">
              <Popover>
                 <TooltipProvider>
                     <Tooltip>
@@ -227,8 +233,8 @@ export function Header({
                             <Button variant="ghost" size="icon" className={cn("relative", currentPage === 'notifications' && 'bg-primary/10 text-primary')}>
                                 <Bell className="h-5 w-5" />
                                 {suitablePositions.length > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground">
-                                        {suitablePositions.length}
+                                    <span className="absolute top-0 right-0 flex h-3 w-3 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground">
+                                        {suitablePositions.length > 9 ? '9+' : suitablePositions.length}
                                     </span>
                                 )}
                             </Button>

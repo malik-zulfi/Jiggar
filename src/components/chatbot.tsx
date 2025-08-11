@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -92,27 +91,29 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           size="icon"
-          className="rounded-full w-14 h-14 shadow-lg"
+          className="rounded-full w-16 h-16 shadow-lg"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle chat"
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Bot className="w-6 h-6" />}
+          {isOpen ? <X className="w-8 h-8" /> : <Bot className="w-8 h-8" />}
         </Button>
       </div>
 
       {isOpen && (
         <div className="fixed bottom-24 right-6 z-50 w-full max-w-md">
-          <Card className="shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="text-primary"/>
+          <Card className="shadow-2xl border-2">
+            <CardHeader className="flex flex-row items-center justify-between bg-muted/50 border-b">
+              <CardTitle className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-full">
+                    <Bot className="w-5 h-5 text-primary"/>
+                </div>
                 Recruitment Assistant
               </CardTitle>
               {hasChatHistory && (
                   <TooltipProvider>
                       <Tooltip>
                           <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={handleClearChat}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={handleClearChat}>
                                   <Eraser className="w-4 h-4"/>
                               </Button>
                           </TooltipTrigger>
@@ -123,7 +124,7 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
                   </TooltipProvider>
               )}
             </CardHeader>
-            <CardContent ref={chatContainerRef} className="h-96 overflow-y-auto space-y-4 pr-4">
+            <CardContent ref={chatContainerRef} className="h-96 overflow-y-auto space-y-4 p-4">
               {chatHistory.map((msg, i) => (
                 <div key={i} className={cn("flex items-start gap-3", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
                   <div className={cn(
@@ -133,11 +134,8 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
                     {msg.role === 'assistant' ? (
                        <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
-                          className="text-sm leading-relaxed"
+                          className="text-sm leading-relaxed prose prose-sm dark:prose-invert prose-p:mb-2 prose-p:last:mb-0 prose-ul:my-2 prose-ol:my-2 prose-a:text-primary prose-a:font-semibold hover:prose-a:no-underline"
                           components={{
-                            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
-                            ul: ({node, ordered, ...props}) => <ul className="list-disc list-outside pl-4 space-y-1" {...props} />,
-                            ol: ({node, ordered, ...props}) => <ol className="list-decimal list-outside pl-4 space-y-1" {...props} />,
                             a: ({node, ...props}) => {
                                 const { href, children, ...rest } = props;
                                 const url = href || '';
@@ -171,19 +169,6 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
                                 }
                               
                                 return <a href={url} className="text-primary underline hover:no-underline" {...rest} target="_blank" rel="noopener noreferrer">{children}</a>;
-                            },
-                            code: ({ node, inline, className, children, ...props }) => {
-                                return !inline ? (
-                                    <pre className="text-sm bg-black/10 dark:bg-white/10 p-2 rounded-md overflow-x-auto my-2">
-                                        <code className={cn("font-mono", className)} {...props}>
-                                            {children}
-                                        </code>
-                                    </pre>
-                                ) : (
-                                    <code className={cn("font-mono text-sm px-1 py-0.5 bg-black/10 dark:bg-white/10 rounded", className)} {...props}>
-                                        {children}
-                                    </code>
-                                );
                             },
                             table: ({node, className, ...props}) => (
                                 <div className="my-2 w-full overflow-auto rounded-md border">
@@ -221,7 +206,7 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
                 </div>
               )}
             </CardContent>
-            <CardFooter>
+            <CardFooter className="border-t pt-4">
               <div className="flex items-center gap-2 w-full">
                 <Input
                   placeholder="Ask a question..."
@@ -229,6 +214,7 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
                   disabled={isLoading}
+                  className="h-10"
                 />
                 <Button onClick={handleSend} disabled={!query.trim() || isLoading} size="icon">
                   <Send className="h-4 w-4" />
@@ -241,5 +227,3 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
     </>
   );
 }
-
-    

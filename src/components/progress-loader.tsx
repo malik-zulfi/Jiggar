@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -63,7 +62,7 @@ const ProcessingItem = ({ message, status, isActive, context }: ProcessingItemPr
     if (status === 'done') {
         return (
             <div className="flex items-center gap-3 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-chart-2 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
                 <span className="text-muted-foreground truncate">{message} - Completed</span>
             </div>
         );
@@ -123,7 +122,7 @@ export default function ProgressLoader({
     const isAssessmentContext = title.toLowerCase().includes('assess');
     
     return (
-      <div className="w-full space-y-3 p-4 border rounded-lg bg-muted/50">
+      <div className="w-full space-y-3 p-4 border rounded-lg bg-muted/30">
         <div className="text-center font-sans text-sm font-medium text-foreground">
             <p>{title}</p>
         </div>
@@ -160,12 +159,12 @@ export default function ProgressLoader({
     const stepProgress = ((currentStepIndex + 1) / steps.length) * 100;
     
     return (
-      <div className="w-full space-y-3 p-4 border rounded-lg bg-muted/50 text-xs">
-        <div className="text-center font-sans text-sm font-medium text-foreground">
+      <div className="w-full space-y-4 p-6 border rounded-lg bg-muted/30 text-sm">
+        <div className="text-center font-sans font-medium text-foreground">
             <p>{title}</p>
         </div>
         
-        <div className='mt-4 p-3 bg-black/80 rounded-md text-white/90 h-40 overflow-hidden relative flex flex-col justify-end font-mono'>
+        <div className='mt-4 p-4 bg-black/80 rounded-md text-white/90 h-48 overflow-hidden relative flex flex-col justify-end font-mono text-xs'>
           <div>
              {visibleSteps.map((step, index) => {
                 const isCurrent = (start + index) === currentStepIndex;
@@ -183,11 +182,11 @@ export default function ProgressLoader({
              })}
           </div>
         </div>
-        <div className="space-y-2">
-            <p className="text-center font-sans text-muted-foreground">
+        <div className="space-y-2 pt-2">
+            <p className="text-center font-sans text-muted-foreground text-xs">
                 Step {Math.min(currentStepIndex + 1, steps.length)} of {steps.length}...
             </p>
-            <Progress value={stepProgress} className="w-full h-1" />
+            <Progress value={stepProgress} className="w-full h-2" />
         </div>
       </div>
     );
@@ -195,7 +194,7 @@ export default function ProgressLoader({
 
   // Fallback simple loader for unexpected cases
   return (
-    <div className="w-full space-y-3 p-4 border rounded-lg bg-muted/50">
+    <div className="w-full space-y-3 p-4 border rounded-lg bg-muted/30">
        <div className="text-center text-sm font-medium text-foreground">
             <p>{title}</p>
         </div>

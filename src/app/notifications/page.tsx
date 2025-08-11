@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useCallback } from 'react';
@@ -106,17 +105,17 @@ export default function NotificationsPage() {
         }, {} as Record<string, { assessmentInfo: AssessmentSession; candidates: SuitablePosition[] }>);
     }, [suitablePositions]);
 
-    const groupedPositionsArray = Object.values(groupedPositions);
+    const groupedPositionsArray = Object.values(groupedPositions).sort((a, b) => new Date(b.assessmentInfo.createdAt).getTime() - new Date(a.assessmentInfo.createdAt).getTime());
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-gray-50/50">
             <Header activePage="notifications" onQuickAdd={handleQuickAddToAssessment} />
             <main className="flex-1 p-4 md:p-6">
                 <div className="container mx-auto">
-                    <Card>
-                        <CardHeader className="flex flex-row justify-between items-center">
+                    <Card className="shadow-sm">
+                        <CardHeader className="flex flex-row justify-between items-center border-b">
                             <div>
-                                <CardTitle>Notifications</CardTitle>
+                                <CardTitle className="text-lg">Notifications</CardTitle>
                                 <CardDescription>New relevant roles found for candidates in your database.</CardDescription>
                             </div>
                             {suitablePositions.length > 0 && (
@@ -126,27 +125,27 @@ export default function NotificationsPage() {
                                 </Button>
                             )}
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-0">
                             {groupedPositionsArray.length > 0 ? (
-                                <div className="space-y-4">
+                                <div className="divide-y">
                                     {groupedPositionsArray.map(({ assessmentInfo, candidates }) => {
                                         const selectedForGroup = selectedCandidates[assessmentInfo.id] || new Set();
                                         const allSelectedInGroup = selectedForGroup.size === candidates.length && candidates.length > 0;
                                         const isLoading = loadingAssessments.has(assessmentInfo.id);
 
                                         return (
-                                            <Card key={assessmentInfo.id} className="overflow-hidden">
-                                                <CardHeader className="p-4 bg-secondary/30 flex flex-row justify-between items-center gap-2">
+                                            <div key={assessmentInfo.id} className="p-4 hover:bg-muted/30 transition-colors">
+                                                <div className="flex justify-between items-center gap-4">
                                                     <Link 
                                                         href="/assessment" 
                                                         onClick={(e) => { e.preventDefault(); localStorage.setItem(ACTIVE_SESSION_STORAGE_KEY, assessmentInfo.id); window.location.href = '/assessment'; }}
                                                         className="flex-1 overflow-hidden"
                                                     >
-                                                        <h5 className="font-semibold text-primary truncate" title={assessmentInfo.analyzedJd.JobTitle}>
+                                                        <h5 className="font-semibold text-primary truncate hover:underline" title={assessmentInfo.analyzedJd.JobTitle}>
                                                             {assessmentInfo.analyzedJd.JobTitle}
                                                         </h5>
-                                                        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                                                            <Users className="h-3 w-3" /> {candidates.length} new suitable candidate(s)
+                                                        <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                                                            <Users className="h-4 w-4" /> {candidates.length} new suitable candidate(s)
                                                         </p>
                                                     </Link>
                                                     <Button size="sm" disabled={selectedForGroup.size === 0 || isLoading} onClick={() => handleBulkAdd(assessmentInfo.id, candidates)}>
@@ -157,9 +156,9 @@ export default function NotificationsPage() {
                                                         )}
                                                         Add to Assessment ({selectedForGroup.size})
                                                     </Button>
-                                                </CardHeader>
-                                                <CardContent className="p-2 space-y-1">
-                                                    <div className="flex items-center gap-3 p-2 text-xs font-medium text-muted-foreground">
+                                                </div>
+                                                <div className="pl-4 mt-4 space-y-2 border-l">
+                                                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                                         <Checkbox
                                                             id={`select-all-${assessmentInfo.id}`}
                                                             checked={allSelectedInGroup}
@@ -170,24 +169,28 @@ export default function NotificationsPage() {
                                                         </label>
                                                     </div>
                                                     {candidates.map((pos) => (
-                                                        <div key={pos.candidateEmail} className="flex items-center justify-between gap-2 p-2 rounded-md hover:bg-muted/30">
+                                                        <div key={pos.candidateEmail} className="flex items-center justify-between gap-2 pl-2">
                                                             <div className="flex items-center gap-3 flex-1 overflow-hidden">
                                                                 <Checkbox
                                                                     id={`select-${assessmentInfo.id}-${pos.candidateEmail}`}
                                                                     checked={selectedForGroup.has(pos.candidateEmail)}
                                                                     onCheckedChange={() => handleToggleCandidate(assessmentInfo.id, pos.candidateEmail)}
                                                                 />
-                                                                <label htmlFor={`select-${assessmentInfo.id}-${pos.candidateEmail}`} className="font-medium text-sm truncate cursor-pointer">{pos.candidateName}</label>
+                                                                <Link href={`/cv-database?email=${encodeURIComponent(pos.candidateEmail)}`} passHref>
+                                                                    <a className="font-medium text-sm truncate hover:underline" target="_blank" rel="noopener noreferrer">
+                                                                        {pos.candidateName}
+                                                                    </a>
+                                                                </Link>
                                                             </div>
                                                         </div>
                                                     ))}
-                                                </CardContent>
-                                            </Card>
+                                                </div>
+                                            </div>
                                         );
                                     })}
                                 </div>
                             ) : (
-                                <div className="text-center py-16">
+                                <div className="text-center py-24">
                                     <BellOff className="mx-auto h-12 w-12 text-muted-foreground" />
                                     <h3 className="mt-4 text-lg font-medium">All caught up!</h3>
                                     <p className="mt-2 text-sm text-muted-foreground">You have no new notifications.</p>

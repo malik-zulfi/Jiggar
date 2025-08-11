@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef } from 'react';
@@ -199,7 +198,7 @@ export default function FileUploader({ onFileUpload, onFileClear, acceptedFileTy
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id} className="text-sm font-medium">{label}</Label>
       {processingProgress ? (
         <ProgressLoader
           title={`Reading ${multiple ? 'files' : 'file'}...`}
@@ -210,12 +209,12 @@ export default function FileUploader({ onFileUpload, onFileClear, acceptedFileTy
         <div className="space-y-2">
             <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-foreground">{fileDisplayNames.length} file(s) selected</p>
-                <Button variant="ghost" size="icon" onClick={clearFiles} className="h-6 w-6 shrink-0">
+                <Button variant="ghost" size="icon" onClick={clearFiles} className="h-7 w-7 shrink-0">
                     <X className="h-4 w-4" />
                 </Button>
             </div>
             <div className="p-3 rounded-md border bg-muted/50 max-h-32 overflow-y-auto">
-                <ul className="space-y-1">
+                <ul className="space-y-1.5">
                 {fileDisplayNames.map((name, index) => (
                     <li key={index} className="flex items-center gap-2 overflow-hidden">
                         <FileIcon className="h-4 w-4 text-primary shrink-0" />
@@ -234,8 +233,8 @@ export default function FileUploader({ onFileUpload, onFileClear, acceptedFileTy
           onDrop={handleDrop}
           onClick={handleBrowseClick}
           className={cn(
-            "flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md cursor-pointer transition-colors",
-            isDragging ? "border-primary bg-primary/10" : "border-input hover:border-primary/50"
+            "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+            isDragging ? "border-primary bg-primary/10" : "border-input hover:border-primary/50 bg-background"
           )}
         >
           <input
@@ -246,11 +245,11 @@ export default function FileUploader({ onFileUpload, onFileClear, acceptedFileTy
             onChange={(e) => handleFiles(e.target.files)}
             multiple={multiple}
           />
-          <UploadCloud className="h-8 w-8 text-muted-foreground" />
-          <p className="mt-2 text-sm text-muted-foreground">
+          <UploadCloud className="h-10 w-10 text-muted-foreground" />
+          <p className="mt-3 text-sm text-muted-foreground">
             <span className="font-semibold text-primary">Click to upload</span> or drag and drop
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground mt-1">
             {acceptedFileTypes.replace(/,/g, ', ').toUpperCase()}
           </p>
         </div>

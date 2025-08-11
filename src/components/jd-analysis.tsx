@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -323,20 +322,22 @@ export default function JdAnalysis({ analysis, isOpen, onOpenChange, onRequireme
 
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange} asChild>
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
                 <CollapsibleTrigger asChild>
                   <div className="cursor-pointer">
-                    <CardTitle className="flex items-center gap-2 flex-wrap">
-                      <Briefcase className="h-5 w-5 text-primary"/>
+                    <CardTitle className="flex items-center gap-3 text-lg">
+                      <div className="p-2 bg-primary/10 rounded-full">
+                        <Briefcase className="h-5 w-5 text-primary"/>
+                      </div>
                       <span className="mr-2">{JobTitle || 'Job Description Breakdown'}</span>
                     </CardTitle>
-                    <CardDescription>The JD has been deconstructed. You can edit requirement priorities and scores below.</CardDescription>
+                    <CardDescription className="mt-1">The JD has been deconstructed. You can edit requirement priorities and scores below.</CardDescription>
                   </div>
                 </CollapsibleTrigger>
-                 <div className="flex items-center gap-2 flex-wrap mt-2">
+                 <div className="flex items-center gap-2 flex-wrap mt-3">
                     <InfoBadge label="Position" value={PositionNumber} icon={<span className="font-bold">#</span>} />
                     <InfoBadge label="Code" value={JobCode} icon={<span className="font-bold text-xs">C</span>} />
                     <InfoBadge label="Grade" value={PayGrade} icon={<Star className="w-3 h-3"/>} />
@@ -364,10 +365,10 @@ export default function JdAnalysis({ analysis, isOpen, onOpenChange, onRequireme
           </div>
         </CardHeader>
         <CollapsibleContent>
-          <CardContent>
+          <CardContent className="p-6">
             <Collapsible open={objectiveVisible} onOpenChange={setObjectiveVisible} className="mb-6">
-                 <CollapsibleContent className="p-4 border rounded-lg bg-muted/30">
-                    <div className="mb-4">
+                 <CollapsibleContent className="p-4 border rounded-lg bg-muted/30 space-y-4">
+                    <div>
                         <h3 className="text-base font-semibold mb-2 flex items-center text-primary">
                             <Target className="h-5 w-5" />
                             <span className="ml-2">Principal Objective</span>
@@ -425,5 +426,3 @@ export default function JdAnalysis({ analysis, isOpen, onOpenChange, onRequireme
     </Collapsible>
   );
 }
-
-    

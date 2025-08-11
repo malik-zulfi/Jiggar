@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -453,20 +452,20 @@ export default function CvDatabasePage() {
     };
     
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex flex-col min-h-screen bg-gray-50/50">
             <Header
                 activePage="cv-database"
                 onQuickAdd={handleQuickAddToAssessment}
             />
             <main className="flex-1 p-4 md:p-6">
-                <div className="container mx-auto space-y-4">
-                    <Card>
+                <div className="container mx-auto space-y-6">
+                    <Card className="shadow-sm">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><FileUp /> Add New Candidates</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-lg"><FileUp /> Add New Candidates</CardTitle>
                             <CardDescription>Upload CVs and tag them with a job code to add them to the central database. If a candidate&apos;s email already exists, you will be asked to confirm the replacement.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid md:grid-cols-3 gap-4 items-end">
+                        <CardContent className="space-y-4 p-6">
+                            <div className="grid md:grid-cols-3 gap-6 items-end">
                                 <div className="md:col-span-2">
                                     <FileUploader
                                         key={cvResetKey}
@@ -499,9 +498,9 @@ export default function CvDatabasePage() {
                             )}
                         </CardContent>
                         <CardFooter>
-                             <Button onClick={handleProcessCvs} disabled={(cvsToUpload.length === 0 || !jobCode) && !isProcessing}>
+                             <Button onClick={handleProcessCvs} disabled={(cvsToUpload.length === 0 || !jobCode) && !isProcessing} size="lg">
                                 {isProcessing ? (
-                                    <><Bot className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
+                                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
                                 ) : (
                                     <><Bot className="mr-2 h-4 w-4" /> {Object.keys(processingStatus).length > 0 ? 'Add to Queue' : 'Process & Add to Database'}</>
                                 )}
@@ -509,10 +508,10 @@ export default function CvDatabasePage() {
                         </CardFooter>
                     </Card>
 
-                    <Card>
+                    <Card className="shadow-sm">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Database/> Candidate Records ({cvDatabase.length})</CardTitle>
-                             <div className="flex justify-between items-center gap-4">
+                            <CardTitle className="flex items-center gap-2 text-lg"><Database/> Candidate Records ({cvDatabase.length})</CardTitle>
+                             <div className="flex justify-between items-center gap-4 pt-2">
                                 <CardDescription>Browse, search, and manage all candidates in the database.</CardDescription>
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <div className="relative w-full max-w-xs">
@@ -538,12 +537,12 @@ export default function CvDatabasePage() {
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            <div className="border rounded-md">
+                        <CardContent className="p-0">
+                            <div className="border-t">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead className="w-12 px-3">
+                                            <TableHead className="w-12 px-4">
                                                 <Checkbox
                                                   checked={selectedCvEmails.size > 0 && selectedCvEmails.size === sortedAndFilteredCvs.length}
                                                   indeterminate={selectedCvEmails.size > 0 && selectedCvEmails.size < sortedAndFilteredCvs.length}
@@ -551,18 +550,18 @@ export default function CvDatabasePage() {
                                                 />
                                             </TableHead>
                                             <TableHead className="w-12">Status</TableHead>
-                                            <TableHead onClick={() => handleSort('name')} className="w-1/4">
-                                                <div className="flex items-center gap-2 cursor-pointer">Name <ArrowUpDown className="h-4 w-4" /></div>
+                                            <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-muted">
+                                                <div className="flex items-center gap-2">Name <ArrowUpDown className="h-3 w-3" /></div>
                                             </TableHead>
-                                            <TableHead className="w-1/4">Current Position</TableHead>
-                                            <TableHead onClick={() => handleSort('totalExperience')} className="w-[15%]">
-                                                <div className="flex items-center gap-2 cursor-pointer">Experience <ArrowUpDown className="h-4 w-4" /></div>
+                                            <TableHead>Current Position</TableHead>
+                                            <TableHead onClick={() => handleSort('totalExperience')} className="cursor-pointer hover:bg-muted">
+                                                <div className="flex items-center gap-2">Experience <ArrowUpDown className="h-3 w-3" /></div>
                                             </TableHead>
                                             <TableHead>Job Code</TableHead>
-                                            <TableHead onClick={() => handleSort('createdAt')} className="w-[15%]">
-                                                <div className="flex items-center gap-2 cursor-pointer">Date Added <ArrowUpDown className="h-4 w-4" /></div>
+                                            <TableHead onClick={() => handleSort('createdAt')} className="cursor-pointer hover:bg-muted">
+                                                <div className="flex items-center gap-2">Date Added <ArrowUpDown className="h-3 w-3" /></div>
                                             </TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
+                                            <TableHead className="text-right pr-4">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -573,8 +572,9 @@ export default function CvDatabasePage() {
                                                 <TableRow 
                                                   key={cv.email}
                                                   data-state={selectedCvEmails.has(cv.email) ? 'selected' : ''}
+                                                  className="hover:bg-muted/50"
                                                 >
-                                                    <TableCell className="px-3">
+                                                    <TableCell className="px-4">
                                                         <Checkbox
                                                             checked={selectedCvEmails.has(cv.email)}
                                                             onCheckedChange={(checked) => handleSelectOne(cv.email, !!checked)}
@@ -584,10 +584,17 @@ export default function CvDatabasePage() {
                                                     <TableCell>
                                                         <Popover>
                                                             <PopoverTrigger asChild disabled={count === 0} onClick={(e) => e.stopPropagation()}>
-                                                                <div className={cn("flex items-center", count > 0 && "cursor-pointer")}>
-                                                                    <span className={cn("text-2xl", count > 0 ? "text-green-500" : "text-red-500")}>•</span>
-                                                                    {count > 0 && <sup className="font-bold text-xs -ml-1 text-muted-foreground">{count}</sup>}
-                                                                </div>
+                                                                <TooltipProvider>
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <div className={cn("flex items-center", count > 0 && "cursor-pointer")}>
+                                                                                <span className={cn("text-2xl", count > 0 ? "text-green-500" : "text-muted-foreground")}>•</span>
+                                                                                {count > 0 && <sup className="font-bold text-xs -ml-1 text-muted-foreground">{count}</sup>}
+                                                                            </div>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent><p>{count > 0 ? `${count} assessment(s)` : 'Not assessed'}</p></TooltipContent>
+                                                                    </Tooltip>
+                                                                </TooltipProvider>
                                                             </PopoverTrigger>
                                                             {count > 0 && (
                                                                 <PopoverContent className="w-96 p-2">
@@ -612,16 +619,16 @@ export default function CvDatabasePage() {
                                                             )}
                                                         </Popover>
                                                     </TableCell>
-                                                    <TableCell className="font-medium text-primary truncate cursor-pointer" title={cv.name} onClick={() => setSelectedCv(cv)}>
+                                                    <TableCell className="font-medium text-primary truncate cursor-pointer hover:underline" title={cv.name} onClick={() => setSelectedCv(cv)}>
                                                         {cv.name}
                                                     </TableCell>
                                                     <TableCell className="truncate" title={cv.currentTitle || 'N/A'}>
                                                         {cv.currentTitle || 'N/A'}
                                                     </TableCell>
                                                     <TableCell>{cv.totalExperience || 'N/A'}</TableCell>
-                                                    <TableCell><Badge variant="secondary">{cv.jobCode}</Badge></TableCell>
+                                                    <TableCell><Badge variant="outline">{cv.jobCode}</Badge></TableCell>
                                                     <TableCell>{new Date(cv.createdAt).toLocaleDateString()}</TableCell>
-                                                    <TableCell className="text-right">
+                                                    <TableCell className="text-right pr-4">
                                                         <div className="flex items-center justify-end gap-1">
                                                              <AddCandidatePopover
                                                                 candidate={cv}
@@ -663,7 +670,7 @@ export default function CvDatabasePage() {
                                             )
                                         }) : (
                                             <TableRow>
-                                                <TableCell colSpan={8} className="h-24 text-center">
+                                                <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
                                                     {cvDatabase.length > 0 ? "No candidates found matching your search." : "No candidates in the database yet."}
                                                 </TableCell>
                                             </TableRow>
@@ -678,21 +685,23 @@ export default function CvDatabasePage() {
             
             <Sheet open={!!selectedCv} onOpenChange={(isOpen) => { if (!isOpen) setSelectedCv(null); }}>
                 {selectedCv && (
-                    <SheetContent className="w-full sm:max-w-3xl overflow-y-auto">
-                        <SheetHeader className="pr-10">
-                            <SheetTitle className="text-2xl">{selectedCv.name}</SheetTitle>
-                            <SheetDescription>
-                                {selectedCv.currentTitle} at {selectedCv.currentCompany}
-                            </SheetDescription>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm pt-2">
-                                <div className="flex items-center gap-2 text-muted-foreground"><Mail className="w-4 h-4"/>{selectedCv.email}</div>
-                                <div className="flex items-center gap-2 text-muted-foreground"><Phone className="w-4 h-4"/>{selectedCv.contactNumber || 'N/A'}</div>
-                                {selectedCv.linkedinUrl && <div className="flex items-center gap-2 text-muted-foreground"><Linkedin className="w-4 h-4"/><a href={selectedCv.linkedinUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">LinkedIn Profile</a></div>}
+                    <SheetContent className="w-full sm:max-w-3xl p-0">
+                        <ScrollArea className="h-full">
+                            <SheetHeader className="p-6 pr-10">
+                                <SheetTitle className="text-2xl">{selectedCv.name}</SheetTitle>
+                                <SheetDescription>
+                                    {selectedCv.currentTitle} at {selectedCv.currentCompany}
+                                </SheetDescription>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm pt-2">
+                                    <div className="flex items-center gap-2 text-muted-foreground"><Mail className="w-4 h-4"/>{selectedCv.email}</div>
+                                    <div className="flex items-center gap-2 text-muted-foreground"><Phone className="w-4 h-4"/>{selectedCv.contactNumber || 'N/A'}</div>
+                                    {selectedCv.linkedinUrl && <div className="flex items-center gap-2 text-muted-foreground"><Linkedin className="w-4 h-4"/><a href={selectedCv.linkedinUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">LinkedIn Profile</a></div>}
+                                </div>
+                            </SheetHeader>
+                            <div className="px-6 pb-6">
+                                <CvDisplay structuredContent={selectedCv.structuredContent} />
                             </div>
-                        </SheetHeader>
-                        <div className="py-6">
-                            <CvDisplay structuredContent={selectedCv.structuredContent} />
-                        </div>
+                        </ScrollArea>
                     </SheetContent>
                 )}
             </Sheet>

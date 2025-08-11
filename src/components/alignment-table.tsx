@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,10 +17,10 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 
 const statusInfo: Record<AlignmentDetail['status'], { icon: React.ReactNode; label: string }> = {
-  'Aligned': { icon: <CheckCircle2 className="h-5 w-5 text-chart-2" />, label: 'Aligned' },
-  'Partially Aligned': { icon: <AlertTriangle className="h-5 w-5 text-accent" />, label: 'Partially Aligned' },
-  'Not Aligned': { icon: <XCircle className="h-5 w-5 text-destructive" />, label: 'Not Aligned' },
-  'Not Mentioned': { icon: <HelpCircle className="h-5 w-5 text-muted-foreground" />, label: 'Not Mentioned' },
+  'Aligned': { icon: <CheckCircle2 className="h-5 w-5 text-green-500" />, label: 'Aligned' },
+  'Partially Aligned': { icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />, label: 'Partially Aligned' },
+  'Not Aligned': { icon: <XCircle className="h-5 w-5 text-red-500" />, label: 'Not Aligned' },
+  'Not Mentioned': { icon: <HelpCircle className="h-5 w-5 text-gray-500" />, label: 'Not Mentioned' },
 };
 
 const priorityLegend = [
@@ -30,10 +29,10 @@ const priorityLegend = [
 ];
 
 const statusLegend = [
-    { label: 'Aligned', icon: <CheckCircle2 className="h-4 w-4 text-chart-2" /> },
-    { label: 'Partially Aligned', icon: <AlertTriangle className="h-4 w-4 text-accent" /> },
-    { label: 'Not Aligned', icon: <XCircle className="h-4 w-4 text-destructive" /> },
-    { label: 'Not Mentioned', icon: <HelpCircle className="h-4 w-4 text-muted-foreground" /> }
+    { label: 'Aligned', icon: <CheckCircle2 className="h-4 w-4 text-green-500" /> },
+    { label: 'Partially Aligned', icon: <AlertTriangle className="h-4 w-4 text-yellow-500" /> },
+    { label: 'Not Aligned', icon: <XCircle className="h-4 w-4 text-red-500" /> },
+    { label: 'Not Mentioned', icon: <HelpCircle className="h-4 w-4 text-gray-500" /> }
 ];
 
 const Legend = ({ filter, setFilter }: { filter: 'all' | 'issues', setFilter: (value: 'all' | 'issues') => void }) => (
@@ -129,7 +128,7 @@ export default function AlignmentTable({ details }: AlignmentTableProps) {
                                     const info = statusInfo[item.status] || statusInfo['Not Mentioned'];
                                     return (
                                         <TableRow key={index} className="border-t">
-                                            <TableCell className="align-top break-words">
+                                            <TableCell className="align-top p-4">
                                                 <div className="flex items-start gap-3">
                                                     <Tooltip>
                                                         <TooltipTrigger className="mt-1">
@@ -145,8 +144,8 @@ export default function AlignmentTable({ details }: AlignmentTableProps) {
                                                     <span className="font-medium">{item.requirement}</span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-muted-foreground text-sm align-top break-words">{item.justification}</TableCell>
-                                            <TableCell className="align-top">
+                                            <TableCell className="text-muted-foreground text-sm align-top p-4">{item.justification}</TableCell>
+                                            <TableCell className="align-top p-4">
                                                 <div className="flex items-center justify-center">
                                                     <Tooltip>
                                                         <TooltipTrigger>
@@ -158,7 +157,7 @@ export default function AlignmentTable({ details }: AlignmentTableProps) {
                                                     </Tooltip>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="align-top text-center">
+                                            <TableCell className="align-top text-center p-4">
                                                 {(item.score !== undefined && item.maxScore !== undefined) ? (
                                                   <Badge variant="secondary" className="font-semibold">{`${item.score} / ${item.maxScore}`}</Badge>
                                                 ) : (

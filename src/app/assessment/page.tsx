@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -885,13 +884,13 @@ function AssessmentPage() {
   const showSummarySection = (activeSession?.candidates?.length ?? 0) > 0 && !isAssessingNewCvs && !isReassessing;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-gray-50/50">
       <Header
         activePage="assessment"
         onQuickAdd={handleQuickAddToAssessment}
       />
       <main className="flex-1 p-4 md:p-6">
-        <div className="container mx-auto space-y-4">
+        <div className="container mx-auto space-y-6">
             <AlertDialog open={replacementPrompt.isOpen} onOpenChange={(isOpen) => !isOpen && setReplacementPrompt({ isOpen: false, existingSession: null, newJd: null })}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -914,7 +913,7 @@ function AssessmentPage() {
             />
 
           {!activeSession ? (
-            <>
+            <div className="space-y-6">
               {jdAnalysisProgress ? (
                   <div className="p-8">
                       <ProgressLoader
@@ -924,26 +923,29 @@ function AssessmentPage() {
                       />
                   </div>
               ) : (
-                <Card>
-                    <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base"><Briefcase /> Step 1: Start a New Assessment</CardTitle>
-                    <CardDescription>Upload or drop a Job Description (JD) file below to begin analysis.</CardDescription>
+                <Card className="shadow-sm border-dashed border-2">
+                    <CardHeader className="text-center">
+                        <div className="mx-auto bg-primary/10 text-primary rounded-full p-3 w-fit">
+                            <Briefcase className="h-8 w-8" />
+                        </div>
+                        <CardTitle className="text-xl pt-2">Start a New Assessment</CardTitle>
+                        <CardDescription>Upload or drop a Job Description (JD) file below to begin analysis.</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-4">
-                    <FileUploader
-                        id="jd-uploader"
-                        label="Job Description"
-                        acceptedFileTypes={acceptedFileTypes}
-                        onFileUpload={handleJdUpload}
-                        onFileClear={handleJdClear}
-                    />
+                    <CardContent className="p-6">
+                        <FileUploader
+                            id="jd-uploader"
+                            label="Job Description"
+                            acceptedFileTypes={acceptedFileTypes}
+                            onFileUpload={handleJdUpload}
+                            onFileClear={handleJdClear}
+                        />
                     </CardContent>
                 </Card>
               )}
 
-              <Card>
+              <Card className="shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base"><History /> Past Assessments</CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-lg"><History /> Past Assessments</CardTitle>
                   <CardDescription>Select a past assessment to view or continue working on it.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-4">
@@ -960,40 +962,42 @@ function AssessmentPage() {
                     {filteredHistory.length > 0 ? filteredHistory.map(session => (
                       <Card 
                         key={session.id} 
-                        className="hover:shadow-md hover:border-primary/50 transition-all cursor-pointer flex flex-col"
+                        className="hover:shadow-lg hover:border-primary/60 transition-all cursor-pointer flex flex-col bg-white dark:bg-card rounded-lg overflow-hidden"
                         onClick={() => setActiveSessionId(session.id)}
                       >
-                        <CardHeader className="flex-1 p-4">
-                          <CardTitle className="text-base truncate">
+                        <CardHeader className="flex-1 p-4 bg-primary/5">
+                          <CardTitle className="text-base font-semibold truncate">
                             {session.analyzedJd.JobCode && session.analyzedJd.JobCode !== 'Not Found' ? `${session.analyzedJd.JobCode} - ` : ''}
                             {session.analyzedJd.JobTitle || session.jdName}
                           </CardTitle>
-                          <CardDescription className="flex items-center gap-1 text-xs pt-1">
-                            <Users className="h-3 w-3" /> {session.candidates.length} Candidate(s)
+                          <CardDescription className="flex items-center gap-1.5 text-xs pt-1">
+                            <Users className="h-3.5 w-3.5" /> {session.candidates.length} Candidate(s)
                           </CardDescription>
-                           <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap pt-2">
-                                {session.analyzedJd.Department && session.analyzedJd.Department !== 'Not Found' && <Badge variant="secondary" className="px-1.5 py-0 font-normal">{session.analyzedJd.Department}</Badge>}
-                                {session.analyzedJd.PayGrade && session.analyzedJd.PayGrade !== 'Not Found' && <Badge variant="secondary" className="px-1.5 py-0 font-normal">G{session.analyzedJd.PayGrade}</Badge>}
-                            </div>
                         </CardHeader>
-                        <CardFooter className="p-3 border-t">
-                            <p className="text-xs text-muted-foreground">Created: {new Date(session.createdAt).toLocaleDateString()}</p>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 ml-auto" onClick={(e) => {e.stopPropagation(); handleDeleteSession(session.id)}}>
-                              <Trash2 className="h-4 w-4 text-destructive/60 hover:text-destructive" />
+                        <CardContent className="p-4 flex-1">
+                           <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
+                                {session.analyzedJd.Department && session.analyzedJd.Department !== 'Not Found' && <Badge variant="secondary">{session.analyzedJd.Department}</Badge>}
+                                {session.analyzedJd.PayGrade && session.analyzedJd.PayGrade !== 'Not Found' && <Badge variant="secondary">Grade {session.analyzedJd.PayGrade}</Badge>}
+                            </div>
+                        </CardContent>
+                        <CardFooter className="p-3 bg-gray-50 dark:bg-card/80 border-t flex items-center justify-between">
+                            <p className="text-xs text-muted-foreground">{new Date(session.createdAt).toLocaleDateString()}</p>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => {e.stopPropagation(); handleDeleteSession(session.id)}}>
+                              <Trash2 className="h-4 w-4 text-destructive/70 hover:text-destructive transition-colors" />
                             </Button>
                         </CardFooter>
                       </Card>
                     )) : (
-                      <p className="col-span-full text-center text-muted-foreground py-8">
-                        {history.length > 0 ? "No matching assessments found." : "No assessments yet."}
-                      </p>
+                      <div className="col-span-full text-center text-muted-foreground py-12">
+                        <p>{history.length > 0 ? "No matching assessments found." : "No assessments yet."}</p>
+                      </div>
                     )}
                   </div>
                 </CardContent>
               </Card>
-            </>
+            </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
                 <Button variant="outline" onClick={() => setActiveSessionId(null)} className="mb-2">
                     <ArrowLeft className="mr-2 h-4 w-4"/>
                     Back to all assessments
@@ -1009,13 +1013,13 @@ function AssessmentPage() {
                     onDeleteRequirement={handleDeleteRequirement}
                 />
                 
-                <Card>
+                <Card className="shadow-sm">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-base"><UserPlus /> Step 2: Add Candidates</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-lg"><UserPlus /> Step 2: Add Candidates</CardTitle>
                         <CardDescription>Upload new CVs or add candidates from your database to assess them against this job description. Job Code: <Badge variant="secondary">{activeSession.analyzedJd.JobCode || 'Not Set'}</Badge></CardDescription>
                     </CardHeader>
-                    <CardContent className="p-4 space-y-4">
-                        <div className="grid md:grid-cols-2 gap-6 items-start">
+                    <CardContent className="p-6 space-y-6">
+                        <div className="grid md:grid-cols-2 gap-8 items-start">
                              <FileUploader
                                 key={cvResetKey}
                                 id="cv-uploader"
@@ -1025,18 +1029,18 @@ function AssessmentPage() {
                                 onFileClear={handleCvClear}
                                 multiple={true}
                             />
-                            <div className="space-y-4 pt-7">
+                            <div className="space-y-4 pt-8">
                                 <Button 
                                     onClick={handleAnalyzeCvs} 
                                     disabled={cvs.length === 0 || isAssessingNewCvs || isReassessing} 
-                                    className="w-full"
+                                    className="w-full text-base py-6"
                                 >
                                     {isAssessingNewCvs ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
                                     {isAssessingNewCvs ? 'Assessing...' : `Add & Assess ${cvs.length > 0 ? `(${cvs.length})` : ''}`}
                                 </Button>
                             </div>
                         </div>
-                        <Separator />
+                        <Separator className="my-4" />
                         <div className="flex justify-center">
                             <Dialog open={isAddFromDbOpen} onOpenChange={setIsAddFromDbOpen}>
                                 <DialogTrigger asChild>
@@ -1057,12 +1061,12 @@ function AssessmentPage() {
                 </Card>
 
                 {showReviewSection && (
-                    <Card>
+                    <Card className="shadow-sm">
                         <CardHeader>
                             <div className="flex items-center justify-between gap-4 flex-wrap">
-                                <div className="flex-1">
-                                    <CardTitle className="flex items-center gap-2 text-base"><Users /> Step 3: Review Candidates</CardTitle>
-                                    <CardDescription>
+                                <div className="flex-1 min-w-0">
+                                    <CardTitle className="flex items-center gap-2 text-lg"><Users /> Step 3: Review Candidates</CardTitle>
+                                    <CardDescription className="truncate">
                                       {isAssessingNewCvs 
                                           ? 'Assessing new candidates...' 
                                           : isReassessing
@@ -1070,7 +1074,7 @@ function AssessmentPage() {
                                           : 'Review assessments, or re-assess candidates.'}
                                     </CardDescription>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-shrink-0">
                                     {activeSession.candidates.length > 0 && !isAssessingNewCvs && (
                                         <Button 
                                             variant="outline" 
@@ -1096,7 +1100,7 @@ function AssessmentPage() {
 
                           {activeSession.candidates.length > 0 && (
                             <div className={cn((isReassessing) && "opacity-60 pointer-events-none")}>
-                              <Accordion type="single" collapsible className="w-full">
+                              <Accordion type="single" collapsible className="w-full space-y-2">
                                   {activeSession.candidates.map((c, i) => (
                                       <CandidateCard 
                                           key={`${c.analysis.candidateName}-${i}`} 
@@ -1116,12 +1120,12 @@ function AssessmentPage() {
                 
                 {showSummarySection && (
                   <>
-                      <Card>
+                      <Card className="shadow-sm">
                           <CardHeader>
-                              <CardTitle className="flex items-center gap-2 text-base"><Lightbulb /> Step 4: Generate Summary</CardTitle>
+                              <CardTitle className="flex items-center gap-2 text-lg"><Lightbulb /> Step 4: Generate Summary</CardTitle>
                               <CardDescription>Create a summary report of all assessed candidates with a suggested interview strategy.</CardDescription>
                           </CardHeader>
-                          <CardContent className="p-4">
+                          <CardContent className="p-6">
                               {summaryProgress ? (
                                   <ProgressLoader
                                       title="Generating Summary..."
@@ -1129,7 +1133,8 @@ function AssessmentPage() {
                                       currentStepIndex={summaryProgress.currentStepIndex}
                                   />
                               ) : (
-                                  <Button onClick={handleGenerateSummary} disabled={!!activeSession.summary}>
+                                  <Button onClick={handleGenerateSummary} disabled={!!activeSession.summary} size="lg">
+                                      <Wand2 className="mr-2 h-5 w-5" />
                                       {activeSession.summary ? "Summary Generated" : "Generate Summary"}
                                   </Button>
                               )}
@@ -1320,5 +1325,3 @@ const JobCodeDialog = ({ isOpen, onClose, onConfirm }: {
 };
 
 export default AssessmentPage;
-
-    
