@@ -28,14 +28,16 @@ Image:
 {{media url=image}}`,
 });
 
-const performOcrFlow = ai.defineFlow(
-  {
-    name: 'performOcrFlow',
-    inputSchema: OcrInputSchema,
-    outputSchema: OcrOutputSchema,
-  },
-  async input => {
-    const {output} = await withRetry(() => prompt(input));
-    return output!;
-  }
-);
+export function createOcrFlow() {
+  return ai.defineFlow(
+    {
+      name: 'performOcrFlow',
+      inputSchema: OcrInputSchema,
+      outputSchema: OcrOutputSchema,
+    },
+    async input => {
+      const {output} = await withRetry(() => prompt(input));
+      return output!;
+    }
+  );
+}

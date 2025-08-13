@@ -116,7 +116,9 @@ export function ClientProvider({
       setHistory(data.history || []);
       setCvDatabase(data.cvDatabase || []);
       setSuitablePositions(data.suitablePositions || []);
-      toast({ title: 'Import Complete', description: 'All data has been replaced.' });
+      setTimeout(() => {
+        toast({ title: 'Import Complete', description: 'All data has been replaced.' });
+      }, 0);
       return;
     }
 
@@ -139,18 +141,24 @@ export function ClientProvider({
         const newPositions = data.suitablePositions.filter(p => !existingKeys.has(`${p.candidateEmail}-${p.assessment.id}`));
         return [...prev, ...newPositions];
       });
-      toast({ title: 'Import Complete', description: 'New data has been appended.' });
+      setTimeout(() => {
+        toast({ title: 'Import Complete', description: 'New data has been appended.' });
+      }, 0);
     }
   }, [toast]);
   
   const runGlobalRelevanceCheck = useCallback(async () => {
     if (history.length === 0 || cvDatabase.length === 0) {
-        toast({ variant: 'destructive', title: "Cannot Run Check", description: "There are no jobs or candidates to check." });
+        setTimeout(() => {
+          toast({ variant: 'destructive', title: "Cannot Run Check", description: "There are no jobs or candidates to check." });
+        }, 0);
         return;
     }
     
     setManualCheckStatus('loading');
-    toast({ description: `Checking for suitable positions for all ${cvDatabase.length} candidate(s)...` });
+    setTimeout(() => {
+      toast({ description: `Checking for suitable positions for all ${cvDatabase.length} candidate(s)...` });
+    }, 0);
 
     try {
         let allNewPositions: SuitablePosition[] = [];
@@ -172,16 +180,22 @@ export function ClientProvider({
                 const uniqueNewPositions = allNewPositions.filter(p => !existingSet.has(`${p.candidateEmail}-${p.assessment.id}`));
                 return [...prev, ...uniqueNewPositions];
             });
-            toast({
-                title: "New Opportunities Found!",
-                description: `Found ${allNewPositions.length} new relevant position(s). Check the notifications panel.`,
-            });
+            setTimeout(() => {
+              toast({
+                  title: "New Opportunities Found!",
+                  description: `Found ${allNewPositions.length} new relevant position(s). Check the notifications panel.`,
+              });
+            }, 0);
         } else {
-             toast({ description: `No new relevant positions found.` });
+             setTimeout(() => {
+               toast({ description: `No new relevant positions found.` });
+             }, 0);
         }
     } catch (error: any) {
         console.error(`Global relevance check failed:`, error);
-        toast({ variant: 'destructive', title: "Relevance Check Failed", description: error.message });
+        setTimeout(() => {
+          toast({ variant: 'destructive', title: "Relevance Check Failed", description: error.message });
+        }, 0);
     } finally {
         setManualCheckStatus('done');
         setTimeout(() => setManualCheckStatus('idle'), 3000);

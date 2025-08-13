@@ -56,18 +56,20 @@ CV Text:
 `,
 });
 
-const parseCvFlow = ai.defineFlow(
-  {
-    name: 'parseCvFlow',
-    inputSchema: ParseCvInputSchema,
-    outputSchema: ParseCvOutputSchema,
-  },
-  async input => {
-    const {output} = await withRetry(() => prompt(input));
-    if (!output) {
-        throw new Error("CV parsing failed: The AI returned an empty or invalid response.");
+export function createParseCvFlow() {
+  return ai.defineFlow(
+    {
+      name: 'parseCvFlow',
+      inputSchema: ParseCvInputSchema,
+      outputSchema: ParseCvOutputSchema,
+    },
+    async input => {
+      const {output} = await withRetry(() => prompt(input));
+      if (!output) {
+          throw new Error("CV parsing failed: The AI returned an empty or invalid response.");
+      }
+      // We no longer throw an error if email is missing, but the frontend will handle it.
+      return output;
     }
-    // We no longer throw an error if email is missing, but the frontend will handle it.
-    return output;
-  }
-);
+  );
+}

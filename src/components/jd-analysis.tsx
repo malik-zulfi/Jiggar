@@ -245,7 +245,7 @@ const AddRequirementForm = ({ onAdd }: { onAdd: (description: string, priority: 
                 <div className="grid gap-4">
                     <div className="space-y-2">
                         <h4 className="font-medium leading-none">Add a Custom Requirement</h4>
-                        <p className="text-sm text-muted-foreground">This will be added to the 'Additional Requirements' category.</p>
+                        <p className="text-sm text-muted-foreground">This will be added to the &apos;Additional Requirements&apos; category.</p>
                     </div>
                     <div className="grid gap-2">
                         <div className="grid grid-cols-3 items-center gap-4">

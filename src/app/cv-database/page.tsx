@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -107,7 +106,6 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppContext } from "@/components/client-provider";
-import { analyzeCVAgainstJD } from "@/ai/flows/cv-analyzer";
 
 const ACTIVE_SESSION_STORAGE_KEY = "jiggar-active-session";
 const PENDING_ASSESSMENT_KEY = "jiggar-pending-assessment";
@@ -213,6 +211,11 @@ export default function CvDatabasePage() {
     if (cvDatabase.length === 0 || history.length === 0) {
       return map;
     }
+
+    // Pre-populate map with empty arrays for all CVs in database
+    cvDatabase.forEach((cv) => {
+      map.set(cv.email.toLowerCase(), []);
+    });
 
     history.forEach((session) => {
       session.candidates.forEach((candidate) => {
@@ -1221,11 +1224,15 @@ const AddCandidatePopover = ({
 
   const compatibleAssessments = useMemo(() => {
     const assessedSessionIds = new Set(assessments.map((a) => a.sessionId));
-    return allAssessments.filter(
-      (session) =>
-        session.analyzedJd.JobCode === candidate.jobCode &&
-        !assessedSessionIds.has(session.id)
-    );
+    return allAssessments.filter((session) => {
+      // Check if job code matches
+      const isJobCodeMatch = session.analyzedJd.JobCode === candidate.jobCode;
+      // Check if candidate is not already in this session
+      const isCandidateNotInSession = !session.candidates.some(
+        (c) => c.analysis.email?.toLowerCase() === candidate.email.toLowerCase()
+      );
+      return isJobCodeMatch && isCandidateNotInSession;
+    });
   }, [candidate, assessments, allAssessments]);
 
   return (

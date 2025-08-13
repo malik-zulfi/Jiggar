@@ -127,7 +127,7 @@ export default function AlignmentTable({ details }: AlignmentTableProps) {
                                 {items.map((item, index) => {
                                     const info = statusInfo[item.status] || statusInfo['Not Mentioned'];
                                     return (
-                                        <TableRow key={index} className="border-t">
+                                        <TableRow key={index} className={cn("border-t", item.isEdited && "bg-yellow-50/50 border-l-4 border-yellow-300")}>
                                             <TableCell className="align-top p-4">
                                                 <div className="flex items-start gap-3">
                                                     <Tooltip>

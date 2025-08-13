@@ -43,19 +43,21 @@ function toTitleCase(str: string): string {
         .join(' ');
 }
 
-const extractCandidateNameFlow = ai.defineFlow(
-  {
-    name: 'extractCandidateNameFlow',
-    inputSchema: ExtractCandidateNameInputSchema,
-    outputSchema: ExtractCandidateNameOutputSchema,
-  },
-  async input => {
-    const {output} = await withRetry(() => prompt(input));
-    if (output) {
-        return {
-            candidateName: toTitleCase(output.candidateName)
-        };
+export function createNameExtractorFlow() {
+  return ai.defineFlow(
+    {
+      name: 'extractCandidateNameFlow',
+      inputSchema: ExtractCandidateNameInputSchema,
+      outputSchema: ExtractCandidateNameOutputSchema,
+    },
+    async input => {
+      const {output} = await withRetry(() => prompt(input));
+      if (output) {
+          return {
+              candidateName: toTitleCase(output.candidateName)
+          };
+      }
+      return { candidateName: '' };
     }
-    return { candidateName: '' };
-  }
-);
+  );
+}

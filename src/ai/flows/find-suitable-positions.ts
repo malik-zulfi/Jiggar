@@ -77,7 +77,8 @@ Instructions:
 `,
 });
 
-const findSuitablePositionsFlow = ai.defineFlow(
+export function createFindSuitablePositionsFlow() {
+  return ai.defineFlow(
     {
         name: 'findSuitablePositionsFlow',
         inputSchema: FindSuitablePositionsInputSchema,

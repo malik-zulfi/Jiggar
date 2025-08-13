@@ -66,14 +66,16 @@ const prompt = ai.definePrompt({
   `,
 });
 
-const summarizeCandidateAssessmentsFlow = ai.defineFlow(
-  {
-    name: 'summarizeCandidateAssessmentsFlow',
-    inputSchema: CandidateSummaryInputSchema,
-    outputSchema: CandidateSummaryOutputSchema,
-  },
-  async input => {
-    const {output} = await withRetry(() => prompt(input));
-    return output!;
-  }
-);
+export function createSummarizeCandidateAssessmentsFlow() {
+  return ai.defineFlow(
+    {
+      name: 'summarizeCandidateAssessmentsFlow',
+      inputSchema: CandidateSummaryInputSchema,
+      outputSchema: CandidateSummaryOutputSchema,
+    },
+    async input => {
+      const {output} = await withRetry(() => prompt(input));
+      return output!;
+    }
+  );
+}
