@@ -31,6 +31,7 @@ export type { CandidateSummaryOutput };
 
 
 export async function summarizeCandidateAssessments(input: CandidateSummaryInput): Promise<CandidateSummaryOutput> {
+  const summarizeCandidateAssessmentsFlow = await createSummarizeCandidateAssessmentsFlow();
   return summarizeCandidateAssessmentsFlow(input);
 }
 
@@ -66,7 +67,7 @@ const prompt = ai.definePrompt({
   `,
 });
 
-export function createSummarizeCandidateAssessmentsFlow() {
+export async function createSummarizeCandidateAssessmentsFlow() {
   return ai.defineFlow(
     {
       name: 'summarizeCandidateAssessmentsFlow',

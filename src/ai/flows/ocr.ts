@@ -14,6 +14,7 @@ import { withRetry } from '@/lib/retry';
 export type { OcrInput, OcrOutput };
 
 export async function performOcr(input: OcrInput): Promise<OcrOutput> {
+  const performOcrFlow = await createOcrFlow();
   return performOcrFlow(input);
 }
 
@@ -28,7 +29,7 @@ Image:
 {{media url=image}}`,
 });
 
-export function createOcrFlow() {
+export async function createOcrFlow() {
   return ai.defineFlow(
     {
       name: 'performOcrFlow',

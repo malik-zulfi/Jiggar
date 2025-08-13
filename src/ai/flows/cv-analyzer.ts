@@ -42,6 +42,7 @@ export type { AnalyzeCVAgainstJDOutput };
 export async function analyzeCVAgainstJD(
   input: AnalyzeCVAgainstJDInput
 ): Promise<AnalyzeCVAgainstJDOutput> {
+  const analyzeCVAgainstJDFlow = await createAnalyzeCVAgainstJDFlow();
   return analyzeCVAgainstJDFlow(input);
 }
 
@@ -104,7 +105,7 @@ Now, perform the analysis and return the complete JSON object without the 'recom
 `,
 });
 
-export function createAnalyzeCVAgainstJDFlow() {
+export async function createAnalyzeCVAgainstJDFlow() {
   return ai.defineFlow(
     {
       name: "analyzeCVAgainstJDFlow",

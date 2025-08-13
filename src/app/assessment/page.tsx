@@ -175,8 +175,7 @@ function AssessmentPage() {
     reject: (reason?: any) => void;
   } | null>(null);
 
-  const [jdSearchResults, setJdSearchResults] = useState<{ fileName: string; lastModified: Date }[]>([]);
-  const [jdSearchQuery, setJdSearchQuery] = useState("");
+  
 
   const activeSession = useMemo(
     () => history.find((s) => s.id === activeSessionId),
@@ -1284,67 +1283,9 @@ function AssessmentPage() {
     });
   };
 
-  const handleJdSearch = async () => {
-    if (!jdSearchQuery.trim()) {
-      toast({
-        variant: "destructive",
-        description: "Please enter a search query.",
-      });
-      return;
-    }
+  
 
-    try {
-      const response = await fetch('/api/genkit/searchJds', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ searchQuery: jdSearchQuery }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Something went wrong');
-      }
-
-      const results = await response.json();
-      setJdSearchResults(results);
-    } catch (error: any) {
-      console.error("Error searching for JDs:", error);
-      toast({
-        variant: "destructive",
-        title: "Search Error",
-        description: error.message || "An unexpected error occurred.",
-      });
-    }
-  };
-
-  const handleUploadAndAnalyze = async (fileName: string) => {
-    try {
-      const response = await fetch('/api/genkit/readJdFile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fileName }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Something went wrong');
-      }
-
-      const { content } = await response.json();
-      handleJdUpload([{ name: fileName, content }]);
-    } catch (error: any) {
-      console.error("Error reading JD file:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An unexpected error occurred.",
-      });
-    }
-  };
+  
 
   const handleCandidateScoreUpdate = (
     candidateName: string,
@@ -1535,48 +1476,6 @@ function AssessmentPage() {
                       onFileUpload={handleJdUpload}
                       onFileClear={handleJdClear}
                     />
-                    <div className="mt-4">
-                      <Label htmlFor="jd-search">Search for a JD in your local folder</Label>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Input
-                          id="jd-search"
-                          placeholder="Enter a JD title to search"
-                          value={jdSearchQuery}
-                          onChange={(e) => setJdSearchQuery(e.target.value)}
-                        />
-                        <Button onClick={handleJdSearch}>
-                          <Search className="h-4 w-4 mr-2" />
-                          Search
-                        </Button>
-                      </div>
-                    </div>
-                    {jdSearchResults.length > 0 && (
-                      <div className="mt-4">
-                        <h3 className="text-lg font-semibold">Search Results</h3>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>File Name</TableHead>
-                              <TableHead>Last Modified</TableHead>
-                              <TableHead></TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {jdSearchResults.map((result) => (
-                              <TableRow key={result.fileName}>
-                                <TableCell>{result.fileName}</TableCell>
-                                <TableCell>{new Date(result.lastModified).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                  <Button onClick={() => handleUploadAndAnalyze(result.fileName)}>
-                                    Upload and Analyze
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               )}

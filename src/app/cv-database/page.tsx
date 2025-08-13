@@ -82,7 +82,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { findSuitablePositionsForCandidate } from "@/ai/flows/find-suitable-positions";
+
 import { Header } from "@/components/header";
 import {
   Table,
@@ -338,11 +338,23 @@ export default function CvDatabasePage() {
       try {
         let allNewPositions: SuitablePosition[] = [];
         for (const candidate of candidatesToCheck) {
-          const result = await findSuitablePositionsForCandidate({
-            candidates: [candidate],
-            assessmentSessions: history,
-            existingSuitablePositions: suitablePositions,
+          const response = await fetch("/api/genkit/findSuitablePositions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              candidates: [candidate],
+              assessmentSessions: history,
+              existingSuitablePositions: suitablePositions,
+            }),
           });
+
+          if (!response.ok) {
+            throw new Error(`API error: ${response.statusText}`);
+          }
+
+          const result = await response.json();
           if (result.newlyFoundPositions.length > 0) {
             allNewPositions.push(...result.newlyFoundPositions);
           }

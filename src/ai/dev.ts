@@ -1,10 +1,10 @@
 import { config } from 'dotenv';
 config();
 
-import { configureGenkit } from 'genkit';
+import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 
-import { queryKnowledgeBaseFlow } from './flows/query-knowledge-base';
+import { queryKnowledgeBase } from './flows/query-knowledge-base';
 
 // Import other flows to ensure they are registered
 import './flows/cv-analyzer';
@@ -15,15 +15,13 @@ import './flows/name-extractor';
 import './flows/cv-parser';
 import './flows/find-suitable-positions';
 
-export default configureGenkit({
+export default genkit({
   plugins: [
     googleAI({
       apiKey: process.env.GOOGLE_API_KEY,
     }),
   ],
-  flows: [
-    queryKnowledgeBaseFlow,
-  ],
+  
   logLevel: 'debug',
   enableTracingAndMetrics: true,
 });

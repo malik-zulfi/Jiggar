@@ -8,7 +8,7 @@ import { AssessmentSessionSchema, CvDatabaseRecordSchema } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import Chatbot from '@/components/chatbot';
 import { useToast } from '@/hooks/use-toast';
-import { findSuitablePositionsForCandidate } from '@/ai/flows/find-suitable-positions';
+
 
 const LOCAL_STORAGE_KEY = 'jiggar-history';
 const CV_DB_STORAGE_KEY = 'jiggar-cv-database';
@@ -164,11 +164,23 @@ export function ClientProvider({
         let allNewPositions: SuitablePosition[] = [];
         // Check all candidates one by one to avoid overly large individual calls
         for (const candidate of cvDatabase) {
-            const result = await findSuitablePositionsForCandidate({
-                candidates: [candidate],
-                assessmentSessions: history,
-                existingSuitablePositions: suitablePositions
+            const response = await fetch('/api/genkit/findSuitablePositions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    candidates: [candidate],
+                    assessmentSessions: history,
+                    existingSuitablePositions: suitablePositions
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.statusText}`);
+            }
+
+            const result = await response.json();
             if (result.newlyFoundPositions.length > 0) {
                 allNewPositions.push(...result.newlyFoundPositions);
             }

@@ -19,6 +19,7 @@ import { withRetry } from '@/lib/retry';
 export type { ExtractCandidateNameInput, ExtractCandidateNameOutput };
 
 export async function extractCandidateName(input: ExtractCandidateNameInput): Promise<ExtractCandidateNameOutput> {
+  const extractCandidateNameFlow = await createNameExtractorFlow();
   return extractCandidateNameFlow(input);
 }
 

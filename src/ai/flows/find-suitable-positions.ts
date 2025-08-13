@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Finds suitable job positions for a given candidate using an AI tool.
@@ -72,13 +71,12 @@ Instructions:
 1.  Review every candidate's CV against every available job position.
 2.  For each candidate-job pair, perform a high-level relevance check. Focus on core skills, recent job titles, and overall years of experience.
 3.  A match is NOT suitable if the candidate's email and the session ID already appear in the "Already Identified Positions" list. You MUST NOT recommend a position that is already known to be suitable.
-4.  A position is NOT suitable for a candidate if they have already been assessed for it. I have already filtered the 'Available Job Positions' list to exclude any jobs the candidate has already been assessed for. You do not need to perform this check again.
+4.  A position is NOT suitable for a candidate if they have been assessed for it. I have already filtered the 'Available Job Positions' list to exclude any jobs the candidate has already been assessed for. You do not need to perform this check again.
 5.  Return a list of \`suitableMatches\` for all the job/candidate pairs you determine to be a good, new, unassessed fit.
 `,
 });
 
-export function createFindSuitablePositionsFlow() {
-  return ai.defineFlow(
+export const findSuitablePositionsFlow = ai.defineFlow(
     {
         name: 'findSuitablePositionsFlow',
         inputSchema: FindSuitablePositionsInputSchema,
@@ -136,5 +134,3 @@ export function createFindSuitablePositionsFlow() {
 export async function findSuitablePositionsForCandidate(input: FindSuitablePositionsInput): Promise<FindSuitablePositionsOutput> {
     return findSuitablePositionsFlow(input);
 }
-
-    

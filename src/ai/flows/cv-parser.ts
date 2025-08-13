@@ -23,6 +23,7 @@ export async function parseCv(input: { cvText: string }): Promise<ParseCvOutput>
   const now = new Date();
   const currentDate = now.toDateString();
   const experienceCalculatedAt = now.toISOString();
+  const parseCvFlow = await createParseCvFlow();
   return parseCvFlow({ ...input, currentDate, experienceCalculatedAt });
 }
 
@@ -56,7 +57,7 @@ CV Text:
 `,
 });
 
-export function createParseCvFlow() {
+export async function createParseCvFlow() {
   return ai.defineFlow(
     {
       name: 'parseCvFlow',

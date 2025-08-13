@@ -27,6 +27,7 @@ export type ExtractJDCriteriaInput = z.infer<typeof ExtractJDCriteriaInputSchema
 export type { ExtractJDCriteriaOutput };
 
 export async function extractJDCriteria(input: ExtractJDCriteriaInput): Promise<ExtractJDCriteriaOutput> {
+  const extractJDCriteriaFlow = await createExtractJDCriteriaFlow();
   return extractJDCriteriaFlow(input);
 }
 
@@ -62,7 +63,7 @@ const prompt = ai.definePrompt({
 `,
 });
 
-export function createExtractJDCriteriaFlow() {
+export async function createExtractJDCriteriaFlow() {
   return ai.defineFlow(
     {
       name: 'extractJDCriteriaFlow',
