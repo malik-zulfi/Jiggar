@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { CandidateSummaryOutput, AnalyzedCandidate, ExtractJDCriteriaOutput, Requirement } from "@/lib/types";
+import type { CandidateSummaryOutput, AnalyzedCandidate, ExtractJDCriteriaOutput, Requirement, RequirementGroup } from "@/lib/types";
 import { Award, Target, Telescope, UserMinus, UserCheck, Users, Download, Loader2, FileSpreadsheet } from "lucide-react";
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -23,18 +23,25 @@ function extractAllRequirements(jd: ExtractJDCriteriaOutput): Requirement[] {
     const allReqs: Requirement[] = [];
     const { Responsibilities, Requirements } = jd;
 
-    const addReqs = (category: { MUST_HAVE: Requirement[], NICE_TO_HAVE: Requirement[] } | undefined) => {
+    const addFlatReqs = (category: { MUST_HAVE: Requirement[], NICE_TO_HAVE: Requirement[] } | undefined) => {
         if (category) {
             allReqs.push(...category.MUST_HAVE, ...category.NICE_TO_HAVE);
         }
     };
+
+    const addGroupedReqs = (category: { MUST_HAVE: RequirementGroup[], NICE_TO_HAVE: RequirementGroup[] } | undefined) => {
+        if (category) {
+            category.MUST_HAVE.forEach(group => allReqs.push(...group.requirements));
+            category.NICE_TO_HAVE.forEach(group => allReqs.push(...group.requirements));
+        }
+    };
     
-    addReqs(Responsibilities);
-    addReqs(Requirements.Education);
-    addReqs(Requirements.TechnicalSkills);
-    addReqs(Requirements.SoftSkills);
-    addReqs(Requirements.Certifications);
-    addReqs(Requirements.AdditionalRequirements);
+    addFlatReqs(Responsibilities);
+    addGroupedReqs(Requirements.Education);
+    addFlatReqs(Requirements.TechnicalSkills);
+    addFlatReqs(Requirements.SoftSkills);
+    addGroupedReqs(Requirements.Certifications);
+    addFlatReqs(Requirements.AdditionalRequirements);
 
     if (Requirements.Experience.MUST_HAVE.Years && Requirements.Experience.MUST_HAVE.Years !== 'Not Found' && Requirements.Experience.MUST_HAVE.Fields.length > 0) {
         allReqs.push({

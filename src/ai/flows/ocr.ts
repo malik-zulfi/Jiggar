@@ -13,6 +13,11 @@ import { withRetry } from '@/lib/retry';
 
 export type { OcrInput, OcrOutput };
 
+/**
+ * Performs Optical Character Recognition (OCR) on an image.
+ * @param input - The input containing the image data.
+ * @returns A promise that resolves to the OcrOutput.
+ */
 export async function performOcr(input: OcrInput): Promise<OcrOutput> {
   const performOcrFlow = await createOcrFlow();
   return performOcrFlow(input);
@@ -29,6 +34,11 @@ Image:
 {{media url=image}}`,
 });
 
+/**
+ * Defines the Genkit flow for performing OCR.
+ * This flow uses a prompt to extract text from a given image.
+ * @returns A Genkit flow function.
+ */
 export async function createOcrFlow() {
   return ai.defineFlow(
     {

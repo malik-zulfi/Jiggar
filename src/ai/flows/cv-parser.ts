@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Parses a CV to extract key information and structure its content.
@@ -19,18 +18,28 @@ import { withRetry } from '@/lib/retry';
 
 export type { ParseCvOutput };
 
+const cvCache = new Map<string, ParseCvOutput>();
+
 export async function parseCv(input: { cvText: string }): Promise<ParseCvOutput> {
+  const cacheKey = input.cvText;
+  if (cvCache.has(cacheKey)) {
+    return cvCache.get(cacheKey)!;
+  }
+
   const now = new Date();
   const currentDate = now.toDateString();
   const experienceCalculatedAt = now.toISOString();
   const parseCvFlow = await createParseCvFlow();
-  return parseCvFlow({ ...input, currentDate, experienceCalculatedAt });
+  const result = await parseCvFlow({ ...input, currentDate, experienceCalculatedAt });
+  cvCache.set(cacheKey, result);
+  return result;
 }
 
 const prompt = ai.definePrompt({
   name: 'parseCvPrompt',
   input: {schema: ParseCvInputSchema},
   output: {schema: ParseCvOutputSchema},
+  config: { temperature: 0.0 },
   prompt: `You are a world-class CV parsing engine. Your task is to meticulously analyze the provided CV text and extract key information into a structured JSON format.
 
 **Extraction Rules:**
@@ -57,6 +66,11 @@ CV Text:
 `,
 });
 
+/**
+ * Defines the Genkit flow for parsing a CV.
+ * This flow uses a prompt to extract structured information from the CV text.
+ * @returns A Genkit flow function.
+ */
 export async function createParseCvFlow() {
   return ai.defineFlow(
     {

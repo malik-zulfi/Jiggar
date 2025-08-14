@@ -91,7 +91,7 @@ export default function FileUploader({
             canvas.width = viewport.width;
 
             if (context) {
-              await page.render({ canvasContext: context, viewport: viewport })
+              await page.render({ canvasContext: context, viewport: viewport, canvas: canvas })
                 .promise;
               const imageDataUri = canvas.toDataURL("image/png");
               const ocrResult = await performOcr({ image: imageDataUri });

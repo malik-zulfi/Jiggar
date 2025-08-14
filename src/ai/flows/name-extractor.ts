@@ -18,6 +18,11 @@ import { withRetry } from '@/lib/retry';
 
 export type { ExtractCandidateNameInput, ExtractCandidateNameOutput };
 
+/**
+ * Extracts a candidate's full name from CV text.
+ * @param input - The input containing the CV text.
+ * @returns A promise that resolves to the ExtractCandidateNameOutput.
+ */
 export async function extractCandidateName(input: ExtractCandidateNameInput): Promise<ExtractCandidateNameOutput> {
   const extractCandidateNameFlow = await createNameExtractorFlow();
   return extractCandidateNameFlow(input);
@@ -35,6 +40,11 @@ CV Text:
 `,
 });
 
+/**
+ * Converts a string to Title Case.
+ * @param str - The input string.
+ * @returns The string in Title Case.
+ */
 function toTitleCase(str: string): string {
     if (!str) return '';
     return str
@@ -44,6 +54,11 @@ function toTitleCase(str: string): string {
         .join(' ');
 }
 
+/**
+ * Defines the Genkit flow for extracting a candidate's name.
+ * This flow uses a prompt to extract the full name from CV text.
+ * @returns A Genkit flow function.
+ */
 export function createNameExtractorFlow() {
   return ai.defineFlow(
     {

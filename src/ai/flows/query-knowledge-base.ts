@@ -21,6 +21,11 @@ import { withRetry } from '@/lib/retry';
 
 export type { QueryKnowledgeBaseInput, QueryKnowledgeBaseOutput };
 
+/**
+ * Answers user queries about the entire knowledge base of JDs and CVs.
+ * @param input - The input for the query process, excluding currentDate.
+ * @returns A promise that resolves to the QueryKnowledgeBaseOutput.
+ */
 export async function queryKnowledgeBase(input: Omit<QueryKnowledgeBaseInput, 'currentDate'>): Promise<QueryKnowledgeBaseOutput> {
   return queryKnowledgeBaseFlow({
     ...input,
@@ -64,8 +69,8 @@ const prompt = ai.definePrompt({
 -   If the answer cannot be found, state that clearly.
 -   Use Markdown for formatting (lists, bolding, tables).
 -   **Linking Rules (VERY IMPORTANT):**
-    -   When you mention a candidate, link to their profile: \`[Candidate Name](/cv-database?email=CANDIDATE_EMAIL_HERE)\`.
-    -   When you mention an assessment, link to it: \`[Assessment Name](/assessment?sessionId=SESSION_ID_HERE)\`.
+    -   When you mention a candidate, link to their profile: \\[Candidate Name\\](/cv-database?email=CANDIDATE_EMAIL_HERE).
+    -   When you mention an assessment, link to it: \\[Assessment Name\\](/assessment?sessionId=SESSION_ID_HERE).
 
 **Conversation History:**
 {{#each chatHistory}}
@@ -82,7 +87,14 @@ Your answer must be helpful and directly address the user's question, using only
 `,
 });
 
+/**
+ * Defines the Genkit flow for querying the knowledge base.
+ * This flow uses a prompt to answer user questions based on provided JD and CV data.
+ * @param input - The input for the flow, including query, sessions, CV database, chat history, and current date.
+ * @returns A promise that resolves to the QueryKnowledgeBaseOutput.
+ */
 const queryKnowledgeBaseFlow = ai.defineFlow(
+
   {
     name: 'queryKnowledgeBaseFlow',
     inputSchema: QueryKnowledgeBaseInputSchema,
@@ -96,9 +108,9 @@ const queryKnowledgeBaseFlow = ai.defineFlow(
     const knowledgeBase = {
         assessmentSessions: sessions.map(session => ({
             sessionId: session.id,
-            jobTitle: session.analyzedJd.jobTitle,
-            jobCode: session.analyzedJd.code,
-            department: session.analyzedJd.department,
+            jobTitle: session.analyzedJd.JobTitle,
+            jobCode: session.analyzedJd.JobCode,
+            department: session.analyzedJd.Department,
             jdName: session.jdName,
             candidateCount: session.candidates.length,
             candidates: session.candidates.map(c => ({

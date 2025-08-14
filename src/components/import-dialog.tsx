@@ -59,7 +59,7 @@ export default function ImportDialog({ isOpen, onClose, importedData }: ImportDi
           .map(s => ({
             type: 'assessment' as const,
             id: s.id,
-            name: s.analyzedJd.jobTitle || s.jdName,
+            name: s.analyzedJd.JobTitle || s.jdName,
             existing: history.find(e => e.id === s.id)!,
             incoming: s,
             resolution: 'keep' as const,
@@ -197,7 +197,9 @@ export default function ImportDialog({ isOpen, onClose, importedData }: ImportDi
         // Call the context function to update global state
         handleBulkImport(dataToImport, importMode);
         onClose();
-        toast({ title: 'Import Successful', description: 'Your data has been updated.' });
+        setTimeout(() => {
+            toast({ title: 'Import Successful', description: 'Your data has been updated.' });
+        }, 0);
     };
 
     return (

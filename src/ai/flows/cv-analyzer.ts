@@ -39,6 +39,12 @@ export type AnalyzeCVAgainstJDInput = z.infer<
 
 export type { AnalyzeCVAgainstJDOutput };
 
+/**
+ * Analyzes a CV against a Job Description (JD) to identify alignment,
+ * gaps, and provide a recommendation with suggested interview probes.
+ * @param input - The input for the CV analysis process.
+ * @returns A promise that resolves to the AnalyzeCVAgainstJDOutput.
+ */
 export async function analyzeCVAgainstJD(
   input: AnalyzeCVAgainstJDInput
 ): Promise<AnalyzeCVAgainstJDOutput> {
@@ -46,11 +52,16 @@ export async function analyzeCVAgainstJD(
   return analyzeCVAgainstJDFlow(input);
 }
 
+/**
+ * Converts a string to Title Case.
+ * @param str - The input string.
+ * @returns The string in Title Case.
+ */
 function toTitleCase(str: string): string {
   if (!str) return "";
   return str
     .toLowerCase()
-    .split(/[\s-]+/)
+    .split(/["s-]+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
@@ -105,7 +116,14 @@ Now, perform the analysis and return the complete JSON object without the 'recom
 `,
 });
 
+/**
+ * Defines the Genkit flow for analyzing a CV against a Job Description.
+ * This flow uses a prompt to perform a comprehensive analysis and
+ * programmatically calculates scores and recommendations.
+ * @returns A Genkit flow function.
+ */
 export async function createAnalyzeCVAgainstJDFlow() {
+
   return ai.defineFlow(
     {
       name: "analyzeCVAgainstJDFlow",

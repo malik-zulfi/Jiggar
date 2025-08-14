@@ -22,6 +22,6 @@ export default genkit({
     }),
   ],
   
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
+  
+  
 });

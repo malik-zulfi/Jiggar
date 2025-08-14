@@ -41,6 +41,7 @@ import type {
   AlignmentDetail,
   ParseCvOutput,
   Requirement,
+  RequirementGroup,
   AnalyzeCVAgainstJDOutput,
 } from "@/lib/types";
 import { analyzeCVAgainstJD } from "@/ai/flows/cv-analyzer";
@@ -1072,23 +1073,56 @@ function AssessmentPage() {
 
         const processCategory = (
           cat:
-            | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] }
+            | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] } // For flat requirements
+            | { MUST_HAVE: RequirementGroup[]; NICE_TO_HAVE: RequirementGroup[] } // For grouped requirements
             | undefined
         ) => {
           if (!cat) return;
 
           const sourcePriority =
             newPriority === "MUST_HAVE" ? "NICE_TO_HAVE" : "MUST_HAVE";
-          const sourceArray = cat[sourcePriority];
-          const targetArray = cat[newPriority];
+          const targetPriority = newPriority;
 
-          const reqIndex = sourceArray.findIndex((r) => r.id === reqId);
-          if (reqIndex > -1) {
-            const [reqToMove] = sourceArray.splice(reqIndex, 1);
-            reqToMove.priority = newPriority;
-            reqToMove.score = newPriority === "MUST_HAVE" ? 10 : 5; // Reset score to default for new priority
-            targetArray.push(reqToMove);
-            requirementFoundAndMoved = true;
+          // Check if it's a grouped category
+          if (Array.isArray(cat.MUST_HAVE) && cat.MUST_HAVE.some((item: any) => 'groupType' in item)) {
+            // It's a grouped category
+            const sourceGroups = cat[sourcePriority] as RequirementGroup[];
+            const targetGroups = cat[targetPriority] as RequirementGroup[];
+
+            for (const group of sourceGroups) {
+              const reqIndex = group.requirements.findIndex((r) => r.id === reqId);
+              if (reqIndex > -1) {
+                const [reqToMove] = group.requirements.splice(reqIndex, 1);
+                reqToMove.priority = targetPriority;
+                reqToMove.score = targetPriority === "MUST_HAVE" ? 10 : 5;
+                
+                // Add to a suitable group in targetGroups, or create a new one
+                let targetGroup = targetGroups.find(g => g.groupType === group.groupType);
+                if (!targetGroup) {
+                    targetGroup = { groupType: group.groupType, requirements: [] };
+                    targetGroups.push(targetGroup);
+                }
+                targetGroup.requirements.push(reqToMove);
+                requirementFoundAndMoved = true;
+                break; // Found and moved, exit inner loop
+              }
+            }
+            // If requirement was moved from a group, and that group is now empty, remove it
+            cat[sourcePriority] = sourceGroups.filter(g => g.requirements.length > 0) as any; // Cast to any to satisfy type checker temporarily
+            cat[targetPriority] = targetGroups; // Update target
+          } else {
+            // It's a flat category
+            const sourceArray = cat[sourcePriority] as Requirement[];
+            const targetArray = cat[targetPriority] as Requirement[];
+
+            const reqIndex = sourceArray.findIndex((r) => r.id === reqId);
+            if (reqIndex > -1) {
+              const [reqToMove] = sourceArray.splice(reqIndex, 1);
+              reqToMove.priority = targetPriority;
+              reqToMove.score = targetPriority === "MUST_HAVE" ? 10 : 5;
+              targetArray.push(reqToMove);
+              requirementFoundAndMoved = true;
+            }
           }
         };
 
@@ -1103,7 +1137,11 @@ function AssessmentPage() {
             MUST_HAVE: [],
             NICE_TO_HAVE: newJd.Requirements.Experience.NICE_TO_HAVE,
           },
-        ];
+        ] as (
+          | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] }
+          | { MUST_HAVE: RequirementGroup[]; NICE_TO_HAVE: RequirementGroup[] }
+          | undefined
+        )[];
 
         for (const cat of categoriesToSearch) {
           processCategory(cat as any);
@@ -1147,17 +1185,44 @@ function AssessmentPage() {
         const newJd = { ...session.analyzedJd };
         let requirementFound = false;
 
-        const findAndUpdate = (reqs: Requirement[] | undefined) => {
-          if (!reqs) return;
-          const req = reqs.find((r) => r.id === reqId);
-          if (req) {
-            req.score = newScore;
-            requirementFound = true;
+        const findAndUpdate = (
+          cat:
+            | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] } // For flat requirements
+            | { MUST_HAVE: RequirementGroup[]; NICE_TO_HAVE: RequirementGroup[] } // For grouped requirements
+            | undefined,
+          priority: Priority,
+          reqId: string,
+          newScore: number
+        ) => {
+          if (!cat) return;
+
+          const targetArray = cat[priority];
+
+          if (Array.isArray(targetArray) && targetArray.some((item: any) => 'groupType' in item)) {
+            // It's a grouped category
+            const groups = targetArray as RequirementGroup[];
+            for (const group of groups) {
+              const req = group.requirements.find((r) => r.id === reqId);
+              if (req) {
+                req.score = newScore;
+                requirementFound = true;
+                return; // Found and updated, exit
+              }
+            }
+          } else {
+            // It's a flat category
+            const reqs = targetArray as Requirement[];
+            const req = reqs.find((r) => r.id === reqId);
+            if (req) {
+              req.score = newScore;
+              requirementFound = true;
+            }
           }
         };
 
         const categoriesToSearch: (
           | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] }
+          | { MUST_HAVE: RequirementGroup[]; NICE_TO_HAVE: RequirementGroup[] }
           | undefined
         )[] = [
           newJd.Responsibilities,
@@ -1169,12 +1234,12 @@ function AssessmentPage() {
         ];
 
         for (const cat of categoriesToSearch) {
-          if (cat) findAndUpdate((cat as any)[priority]);
+          if (cat) findAndUpdate(cat, priority, reqId, newScore);
           if (requirementFound) break;
         }
 
         if (!requirementFound && priority === "NICE_TO_HAVE") {
-          findAndUpdate(newJd.Requirements.Experience.NICE_TO_HAVE);
+          findAndUpdate({ MUST_HAVE: [], NICE_TO_HAVE: newJd.Requirements.Experience.NICE_TO_HAVE }, priority, reqId, newScore);
         }
 
         if (requirementFound) {

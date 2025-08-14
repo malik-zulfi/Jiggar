@@ -30,6 +30,12 @@ export type CandidateSummaryInput = z.infer<typeof CandidateSummaryInputSchema>;
 export type { CandidateSummaryOutput };
 
 
+/**
+ * Summarizes candidate assessments, categorizes candidates into tiers,
+ * highlights common strengths and gaps, and suggests an interview strategy.
+ * @param input - The input for the summarization process.
+ * @returns A promise that resolves to the CandidateSummaryOutput.
+ */
 export async function summarizeCandidateAssessments(input: CandidateSummaryInput): Promise<CandidateSummaryOutput> {
   const summarizeCandidateAssessmentsFlow = await createSummarizeCandidateAssessmentsFlow();
   return summarizeCandidateAssessmentsFlow(input);
@@ -55,7 +61,7 @@ const prompt = ai.definePrompt({
     Score: {{{alignmentScore}}}%
     Recommendation: {{{recommendation}}}
     Strengths: {{#each strengths}}{{{this}}}, {{/each}}
-    Weaknesses: {{#each weaknesses}}{{{this}}}, {{/each}}
+    Weaknesses: {{#each weaknesses}}{{{this}}}, {{#each weaknesses}}{{{this}}}, {{/each}}
     Interview Probes: {{#each interviewProbes}}{{{this}}}, {{/each}}
   {{/each}}
 
@@ -67,6 +73,12 @@ const prompt = ai.definePrompt({
   `,
 });
 
+/**
+ * Defines the Genkit flow for summarizing candidate assessments.
+ * This flow uses a prompt to categorize candidates, identify commonalities,
+ * and suggest an interview strategy.
+ * @returns A Genkit flow function.
+ */
 export async function createSummarizeCandidateAssessmentsFlow() {
   return ai.defineFlow(
     {

@@ -821,10 +821,6 @@ export default function CvDatabasePage() {
                             selectedCvEmails.size ===
                               sortedAndFilteredCvs.length
                           }
-                          indeterminate={
-                            selectedCvEmails.size > 0 &&
-                            selectedCvEmails.size < sortedAndFilteredCvs.length
-                          }
                           onCheckedChange={(checked) =>
                             handleSelectAll(!!checked)
                           }

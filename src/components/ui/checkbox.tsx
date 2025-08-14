@@ -8,30 +8,12 @@ import { cn } from "@/lib/utils"
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> & {
-    indeterminate?: boolean;
-  }
->(({ className, indeterminate, ...props }, ref) => {
-  const localRef = React.useRef<HTMLButtonElement>(null);
-  
-  React.useEffect(() => {
-    if (localRef.current) {
-      localRef.current.indeterminate = indeterminate ?? false;
-    }
-  }, [indeterminate]);
+  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
+>(({ className, ...props }, ref) => {
 
   return (
     <CheckboxPrimitive.Root
-      ref={(node) => {
-        if (node) {
-          (localRef as React.MutableRefObject<HTMLButtonElement>).current = node;
-          if (typeof ref === 'function') {
-            ref(node);
-          } else if (ref) {
-            ref.current = node;
-          }
-        }
-      }}
+      ref={ref}
       className={cn(
         "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         className

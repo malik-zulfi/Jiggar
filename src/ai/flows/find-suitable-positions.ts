@@ -39,7 +39,7 @@ const findSuitablePositionsPrompt = ai.definePrompt({
     name: 'findSuitablePositionsPrompt',
     input: { schema: FindSuitablePositionsPromptInput },
     output: { schema: FindSuitablePositionsPromptOutput },
-    config: { temperature: 0.1 },
+    config: { temperature: 0.0 },
     prompt: `You are an expert recruitment assistant. Your task is to determine which job positions (Assessment Sessions) are a good fit for all the given candidates.
 
 Candidates Information:
@@ -76,6 +76,12 @@ Instructions:
 `,
 });
 
+/**
+ * Defines the Genkit flow for finding suitable job positions.
+ * This flow uses a prompt to determine which job positions are a good fit for candidates.
+ * @param input - The input for the flow, including candidates, assessment sessions, and existing suitable positions.
+ * @returns A promise that resolves to the FindSuitablePositionsOutput.
+ */
 export const findSuitablePositionsFlow = ai.defineFlow(
     {
         name: 'findSuitablePositionsFlow',
@@ -87,7 +93,7 @@ export const findSuitablePositionsFlow = ai.defineFlow(
         
         const candidatesWithUnassessedSessions = candidates.map(candidate => {
             const unassessedSessions = assessmentSessions.filter(session => {
-                const hasMatchingJobCode = session.analyzedJd.code === candidate.jobCode;
+                const hasMatchingJobCode = session.analyzedJd.JobCode === candidate.jobCode;
                 const isNotAssessed = !session.candidates.some(c => c.analysis.email?.toLowerCase() === candidate.email.toLowerCase());
                 return hasMatchingJobCode && isNotAssessed;
             });
@@ -131,6 +137,11 @@ export const findSuitablePositionsFlow = ai.defineFlow(
     }
 );
 
+/**
+ * Orchestrates finding suitable job positions for a given candidate using an AI tool.
+ * @param input - The input for finding suitable positions.
+ * @returns A promise that resolves to the FindSuitablePositionsOutput.
+ */
 export async function findSuitablePositionsForCandidate(input: FindSuitablePositionsInput): Promise<FindSuitablePositionsOutput> {
     return findSuitablePositionsFlow(input);
 }
