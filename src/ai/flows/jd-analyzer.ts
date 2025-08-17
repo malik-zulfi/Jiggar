@@ -88,7 +88,9 @@ async function createExtractJDCriteriaFlow() {
     async (input) => {
       const { output } = await withRetry(() => prompt(input));
       if (!output) {
-        throw new Error('Failed to extract JD criteria after multiple retries.');
+        throw new Error(
+          'Failed to extract JD criteria after multiple retries.'
+        );
       }
       return output;
     }
