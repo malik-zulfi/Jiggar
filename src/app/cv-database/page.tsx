@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import {
   FileUp,
   Bot,
@@ -30,38 +30,38 @@ import {
   ArrowUpDown,
   AlertTriangle,
   ListFilter,
-} from "lucide-react";
+} from 'lucide-react';
 import type {
   CvDatabaseRecord,
   AssessmentSession,
   SuitablePosition,
   CandidateRecord,
-} from "@/lib/types";
+} from '@/lib/types';
 import {
   CvDatabaseRecordSchema,
   AssessmentSessionSchema,
   ParseCvOutput,
-} from "@/lib/types";
+} from '@/lib/types';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import FileUploader from "@/components/file-uploader";
-import { parseCv } from "@/ai/flows/cv-parser";
-import ProgressLoader from "@/components/progress-loader";
-import { Input } from "@/components/ui/input";
-import CvDisplay from "@/components/cv-display";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/select';
+import FileUploader from '@/components/file-uploader';
+import { parseCv } from '@/ai/flows/cv-parser';
+import ProgressLoader from '@/components/progress-loader';
+import { Input } from '@/components/ui/input';
+import CvDisplay from '@/components/cv-display';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -72,8 +72,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/alert-dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Dialog,
   DialogContent,
@@ -81,9 +81,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { Header } from "@/components/header";
+import { Header } from '@/components/header';
 import {
   Table,
   TableBody,
@@ -91,30 +91,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useAppContext } from "@/components/client-provider";
+} from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useAppContext } from '@/components/client-provider';
 
-const ACTIVE_SESSION_STORAGE_KEY = "jiggar-active-session";
-const PENDING_ASSESSMENT_KEY = "jiggar-pending-assessment";
+const ACTIVE_SESSION_STORAGE_KEY = 'jiggar-active-session';
+const PENDING_ASSESSMENT_KEY = 'jiggar-pending-assessment';
 
 type UploadedFile = { name: string; content: string };
-type JobCode = "OCN" | "WEX" | "SAN";
+type JobCode = 'OCN' | 'WEX' | 'SAN';
 type CvProcessingStatus = Record<
   string,
-  { status: "processing" | "done" | "error"; message: string }
+  { status: 'processing' | 'done' | 'error'; message: string }
 >;
 type Conflict = {
   newRecord: ParseCvOutput & {
@@ -125,8 +125,8 @@ type Conflict = {
   existingRecord: CvDatabaseRecord;
 };
 type SortDescriptor = {
-  column: "name" | "totalExperience" | "createdAt";
-  direction: "ascending" | "descending";
+  column: 'name' | 'totalExperience' | 'createdAt';
+  direction: 'ascending' | 'descending';
 };
 type CandidateAssessmentInfo = {
   sessionId: string;
@@ -150,11 +150,11 @@ export default function CvDatabasePage() {
   const [processingStatus, setProcessingStatus] = useState<CvProcessingStatus>(
     {}
   );
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [cvResetKey, setCvResetKey] = useState(0);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "createdAt",
-    direction: "descending",
+    column: 'createdAt',
+    direction: 'descending',
   });
 
   const [conflictQueue, setConflictQueue] = useState<Conflict[]>([]);
@@ -186,10 +186,10 @@ export default function CvDatabasePage() {
       const aVal = a[sortDescriptor.column];
       const bVal = b[sortDescriptor.column];
 
-      if (sortDescriptor.column === "totalExperience") {
-        const aYears = parseFloat(a.totalExperience || "0");
-        const bYears = parseFloat(b.totalExperience || "0");
-        return sortDescriptor.direction === "ascending"
+      if (sortDescriptor.column === 'totalExperience') {
+        const aYears = parseFloat(a.totalExperience || '0');
+        const bYears = parseFloat(b.totalExperience || '0');
+        return sortDescriptor.direction === 'ascending'
           ? aYears - bYears
           : bYears - aYears;
       }
@@ -200,7 +200,7 @@ export default function CvDatabasePage() {
       const comparison = String(aVal).localeCompare(String(bVal), undefined, {
         numeric: true,
       });
-      return sortDescriptor.direction === "ascending"
+      return sortDescriptor.direction === 'ascending'
         ? comparison
         : -comparison;
     });
@@ -238,7 +238,7 @@ export default function CvDatabasePage() {
           map.get(email)!.push({
             sessionId: session.id,
             sessionName: session.jdName,
-            jobTitle: session.analyzedJd.JobTitle || "N/A",
+            jobTitle: session.analyzedJd.JobTitle || 'N/A',
             score: candidate.analysis.alignmentScore,
           });
         }
@@ -247,15 +247,15 @@ export default function CvDatabasePage() {
     return map;
   }, [history, cvDatabase]);
 
-  const handleSort = (column: SortDescriptor["column"]) => {
+  const handleSort = (column: SortDescriptor['column']) => {
     if (sortDescriptor.column === column) {
       setSortDescriptor({
         ...sortDescriptor,
         direction:
-          sortDescriptor.direction === "ascending" ? "descending" : "ascending",
+          sortDescriptor.direction === 'ascending' ? 'descending' : 'ascending',
       });
     } else {
-      setSortDescriptor({ column, direction: "descending" });
+      setSortDescriptor({ column, direction: 'descending' });
     }
   };
 
@@ -265,11 +265,11 @@ export default function CvDatabasePage() {
     }
   }, [conflictQueue, currentConflict]);
 
-  const resolveConflict = (action: "replace" | "skip") => {
+  const resolveConflict = (action: 'replace' | 'skip') => {
     if (!currentConflict) return;
 
     let newRecord: CvDatabaseRecord | null = null;
-    if (action === "replace") {
+    if (action === 'replace') {
       newRecord = {
         ...currentConflict.newRecord,
         createdAt: new Date().toISOString(),
@@ -302,7 +302,7 @@ export default function CvDatabasePage() {
     if (cvDatabase.length === 0 && history.length === 0) return;
     try {
       const params = new URLSearchParams(window.location.search);
-      const emailToOpen = params.get("email");
+      const emailToOpen = params.get('email');
       if (emailToOpen) {
         const cvToOpen = cvDatabase.find((cv) => cv.email === emailToOpen);
         if (cvToOpen) {
@@ -316,7 +316,7 @@ export default function CvDatabasePage() {
         }
       }
     } catch (error) {
-      console.error("Failed to process URL parameters", error);
+      console.error('Failed to process URL parameters', error);
     }
   }, [cvDatabase, history]);
 
@@ -324,9 +324,9 @@ export default function CvDatabasePage() {
     async (candidatesToCheck: CvDatabaseRecord[]) => {
       if (history.length === 0 || candidatesToCheck.length === 0) {
         toast({
-          variant: "destructive",
-          title: "Cannot Run Check",
-          description: "There are no jobs or candidates to check.",
+          variant: 'destructive',
+          title: 'Cannot Run Check',
+          description: 'There are no jobs or candidates to check.',
         });
         return;
       }
@@ -338,10 +338,10 @@ export default function CvDatabasePage() {
       try {
         let allNewPositions: SuitablePosition[] = [];
         for (const candidate of candidatesToCheck) {
-          const response = await fetch("/api/genkit/findSuitablePositions", {
-            method: "POST",
+          const response = await fetch('/api/genkit/findSuitablePositions', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               candidates: [candidate],
@@ -371,7 +371,7 @@ export default function CvDatabasePage() {
             return [...prev, ...uniqueNewPositions];
           });
           toast({
-            title: "New Opportunities Found!",
+            title: 'New Opportunities Found!',
             description: `Found ${allNewPositions.length} new relevant position(s). Check the notifications panel.`,
           });
         } else {
@@ -382,8 +382,8 @@ export default function CvDatabasePage() {
       } catch (error: any) {
         console.error(`Relevance check failed:`, error);
         toast({
-          variant: "destructive",
-          title: "Relevance Check Failed",
+          variant: 'destructive',
+          title: 'Relevance Check Failed',
           description: error.message,
         });
       }
@@ -399,12 +399,12 @@ export default function CvDatabasePage() {
   );
 
   const toTitleCase = (str: string): string => {
-    if (!str) return "";
+    if (!str) return '';
     return str
       .toLowerCase()
       .split(/[\s-]+/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+      .join(' ');
   };
 
   const handleCvUpload = (files: UploadedFile[]) => {
@@ -417,23 +417,23 @@ export default function CvDatabasePage() {
 
   const isProcessing = useMemo(
     () =>
-      Object.values(processingStatus).some((s) => s.status === "processing"),
+      Object.values(processingStatus).some((s) => s.status === 'processing'),
     [processingStatus]
   );
 
   const handleProcessCvs = useCallback(async () => {
     if (cvsToUpload.length === 0) {
       toast({
-        variant: "destructive",
-        description: "Please upload at least one CV.",
+        variant: 'destructive',
+        description: 'Please upload at least one CV.',
       });
       return;
     }
     const currentJobCode = jobCode;
     if (!currentJobCode) {
       toast({
-        variant: "destructive",
-        description: "Please select a job code.",
+        variant: 'destructive',
+        description: 'Please select a job code.',
       });
       return;
     }
@@ -444,7 +444,7 @@ export default function CvDatabasePage() {
 
     const newStatus = filesToProcess.reduce((acc, cv) => {
       if (!processingStatus[cv.name]) {
-        acc[cv.name] = { status: "processing", message: cv.name };
+        acc[cv.name] = { status: 'processing', message: cv.name };
       }
       return acc;
     }, {} as CvProcessingStatus);
@@ -473,7 +473,7 @@ export default function CvDatabasePage() {
           });
           setProcessingStatus((prev) => ({
             ...prev,
-            [cv.name]: { status: "done", message: parsedData.name },
+            [cv.name]: { status: 'done', message: parsedData.name },
           }));
         } else {
           const record: CvDatabaseRecord = {
@@ -499,19 +499,19 @@ export default function CvDatabasePage() {
           successCount++;
           setProcessingStatus((prev) => ({
             ...prev,
-            [cv.name]: { status: "done", message: record.name },
+            [cv.name]: { status: 'done', message: record.name },
           }));
         }
       } catch (error: any) {
         console.error(`Failed to parse ${cv.name}:`, error);
         toast({
-          variant: "destructive",
+          variant: 'destructive',
           title: `Parsing Failed for ${cv.name}`,
           description: error.message,
         });
         setProcessingStatus((prev) => ({
           ...prev,
-          [cv.name]: { status: "error", message: cv.name },
+          [cv.name]: { status: 'error', message: cv.name },
         }));
       }
     }
@@ -526,7 +526,7 @@ export default function CvDatabasePage() {
       toast({
         title: `${newConflicts.length} Conflict(s) Detected`,
         description:
-          "Some CVs match existing records. Please resolve the conflicts.",
+          'Some CVs match existing records. Please resolve the conflicts.',
       });
     }
 
@@ -597,8 +597,8 @@ export default function CvDatabasePage() {
 
       if (candidateDbRecords.length === 0) {
         toast({
-          variant: "destructive",
-          description: "Could not find candidate records in the database.",
+          variant: 'destructive',
+          description: 'Could not find candidate records in the database.',
         });
         return;
       }
@@ -630,7 +630,7 @@ export default function CvDatabasePage() {
       );
 
       // Navigate
-      window.location.href = "/assessment";
+      window.location.href = '/assessment';
     },
     [cvDatabase, setSuitablePositions, toast]
   );
@@ -654,14 +654,14 @@ export default function CvDatabasePage() {
 
   useEffect(() => {
     const hasFinishedTasks = Object.values(processingStatus).some(
-      (s) => s.status === "done" || s.status === "error"
+      (s) => s.status === 'done' || s.status === 'error'
     );
     if (hasFinishedTasks && !isProcessing) {
       const cleanupTimeout = setTimeout(() => {
         setProcessingStatus((prev) => {
           const newStatus: CvProcessingStatus = {};
           for (const key in prev) {
-            if (prev[key].status === "processing") {
+            if (prev[key].status === 'processing') {
               newStatus[key] = prev[key];
             }
           }
@@ -728,7 +728,7 @@ export default function CvDatabasePage() {
                 <div className="grid gap-1.5">
                   <label className="text-sm font-medium">Job Code</label>
                   <Select
-                    value={jobCode || ""}
+                    value={jobCode || ''}
                     onValueChange={(v) => setJobCode(v as JobCode)}
                   >
                     <SelectTrigger>
@@ -761,15 +761,15 @@ export default function CvDatabasePage() {
               >
                 {isProcessing ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{' '}
                     Processing...
                   </>
                 ) : (
                   <>
-                    <Bot className="mr-2 h-4 w-4" />{" "}
+                    <Bot className="mr-2 h-4 w-4" />{' '}
                     {Object.keys(processingStatus).length > 0
-                      ? "Add to Queue"
-                      : "Process & Add to Database"}
+                      ? 'Add to Queue'
+                      : 'Process & Add to Database'}
                   </>
                 )}
               </Button>
@@ -828,7 +828,7 @@ export default function CvDatabasePage() {
                       </TableHead>
                       <TableHead className="w-12">Status</TableHead>
                       <TableHead
-                        onClick={() => handleSort("name")}
+                        onClick={() => handleSort('name')}
                         className="cursor-pointer hover:bg-muted"
                       >
                         <div className="flex items-center gap-2">
@@ -837,7 +837,7 @@ export default function CvDatabasePage() {
                       </TableHead>
                       <TableHead>Current Position</TableHead>
                       <TableHead
-                        onClick={() => handleSort("totalExperience")}
+                        onClick={() => handleSort('totalExperience')}
                         className="cursor-pointer hover:bg-muted"
                       >
                         <div className="flex items-center gap-2">
@@ -846,7 +846,7 @@ export default function CvDatabasePage() {
                       </TableHead>
                       <TableHead>Job Code</TableHead>
                       <TableHead
-                        onClick={() => handleSort("createdAt")}
+                        onClick={() => handleSort('createdAt')}
                         className="cursor-pointer hover:bg-muted"
                       >
                         <div className="flex items-center gap-2">
@@ -866,7 +866,7 @@ export default function CvDatabasePage() {
                           <TableRow
                             key={cv.email}
                             data-state={
-                              selectedCvEmails.has(cv.email) ? "selected" : ""
+                              selectedCvEmails.has(cv.email) ? 'selected' : ''
                             }
                             className="hover:bg-muted/50"
                           >
@@ -891,16 +891,16 @@ export default function CvDatabasePage() {
                                       <TooltipTrigger asChild>
                                         <div
                                           className={cn(
-                                            "flex items-center",
-                                            count > 0 && "cursor-pointer"
+                                            'flex items-center',
+                                            count > 0 && 'cursor-pointer'
                                           )}
                                         >
                                           <span
                                             className={cn(
-                                              "text-2xl",
+                                              'text-2xl',
                                               count > 0
-                                                ? "text-green-500"
-                                                : "text-muted-foreground"
+                                                ? 'text-green-500'
+                                                : 'text-muted-foreground'
                                             )}
                                           >
                                             •
@@ -916,7 +916,7 @@ export default function CvDatabasePage() {
                                         <p>
                                           {count > 0
                                             ? `${count} assessment(s)`
-                                            : "Not assessed"}
+                                            : 'Not assessed'}
                                         </p>
                                       </TooltipContent>
                                     </Tooltip>
@@ -944,7 +944,7 @@ export default function CvDatabasePage() {
                                               a.sessionId
                                             );
                                             window.location.href =
-                                              "/assessment";
+                                              '/assessment';
                                           }}
                                         >
                                           <div className="p-2 rounded-md hover:bg-secondary flex justify-between items-center">
@@ -959,10 +959,10 @@ export default function CvDatabasePage() {
                                             <Badge
                                               variant={
                                                 a.score >= 75
-                                                  ? "default"
+                                                  ? 'default'
                                                   : a.score >= 40
-                                                  ? "secondary"
-                                                  : "destructive"
+                                                    ? 'secondary'
+                                                    : 'destructive'
                                               }
                                             >
                                               {a.score}%
@@ -984,11 +984,11 @@ export default function CvDatabasePage() {
                             </TableCell>
                             <TableCell
                               className="truncate"
-                              title={cv.currentTitle || "N/A"}
+                              title={cv.currentTitle || 'N/A'}
                             >
-                              {cv.currentTitle || "N/A"}
+                              {cv.currentTitle || 'N/A'}
                             </TableCell>
-                            <TableCell>{cv.totalExperience || "N/A"}</TableCell>
+                            <TableCell>{cv.totalExperience || 'N/A'}</TableCell>
                             <TableCell>
                               <Badge variant="outline">{cv.jobCode}</Badge>
                             </TableCell>
@@ -1033,10 +1033,10 @@ export default function CvDatabasePage() {
                                       </AlertDialogTitle>
                                       <AlertDialogDescription>
                                         This action cannot be undone. This will
-                                        permanently delete the record for{" "}
+                                        permanently delete the record for{' '}
                                         <span className="font-bold">
                                           {cv.name}
-                                        </span>{" "}
+                                        </span>{' '}
                                         and remove them from all assessments.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
@@ -1050,7 +1050,7 @@ export default function CvDatabasePage() {
                                         }
                                         className={cn(
                                           Button,
-                                          "bg-destructive hover:bg-destructive/90"
+                                          'bg-destructive hover:bg-destructive/90'
                                         )}
                                       >
                                         Delete
@@ -1070,8 +1070,8 @@ export default function CvDatabasePage() {
                           className="h-32 text-center text-muted-foreground"
                         >
                           {cvDatabase.length > 0
-                            ? "No candidates found matching your search."
-                            : "No candidates in the database yet."}
+                            ? 'No candidates found matching your search.'
+                            : 'No candidates in the database yet.'}
                         </TableCell>
                       </TableRow>
                     )}
@@ -1104,7 +1104,7 @@ export default function CvDatabasePage() {
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Phone className="w-4 h-4" />
-                    {selectedCv.contactNumber || "N/A"}
+                    {selectedCv.contactNumber || 'N/A'}
                   </div>
                   {selectedCv.linkedinUrl && (
                     <div className="flex items-center gap-2 text-muted-foreground">
@@ -1143,10 +1143,10 @@ export default function CvDatabasePage() {
                 Candidate?
               </DialogTitle>
               <DialogDescription>
-                A candidate with the email{" "}
+                A candidate with the email{' '}
                 <span className="font-bold text-foreground">
                   {currentConflict.existingRecord.email}
-                </span>{" "}
+                </span>{' '}
                 already exists. Do you want to replace the existing record with
                 the new CV you&apos;ve uploaded?
               </DialogDescription>
@@ -1158,17 +1158,17 @@ export default function CvDatabasePage() {
                   className="truncate"
                   title={currentConflict.existingRecord.cvFileName}
                 >
-                  <span className="text-muted-foreground">File:</span>{" "}
+                  <span className="text-muted-foreground">File:</span>{' '}
                   {currentConflict.existingRecord.cvFileName}
                 </p>
                 <p>
-                  <span className="text-muted-foreground">Added:</span>{" "}
+                  <span className="text-muted-foreground">Added:</span>{' '}
                   {new Date(
                     currentConflict.existingRecord.createdAt
                   ).toLocaleDateString()}
                 </p>
                 <p>
-                  <span className="text-muted-foreground">Code:</span>{" "}
+                  <span className="text-muted-foreground">Code:</span>{' '}
                   <Badge variant="secondary">
                     {currentConflict.existingRecord.jobCode}
                   </Badge>
@@ -1182,25 +1182,25 @@ export default function CvDatabasePage() {
                   className="truncate"
                   title={currentConflict.newRecord.cvFileName}
                 >
-                  <span className="text-amber-800/80">File:</span>{" "}
+                  <span className="text-amber-800/80">File:</span>{' '}
                   {currentConflict.newRecord.cvFileName}
                 </p>
                 <p>
-                  <span className="text-amber-800/80">Uploading:</span>{" "}
+                  <span className="text-amber-800/80">Uploading:</span>{' '}
                   {new Date().toLocaleDateString()}
                 </p>
                 <p>
-                  <span className="text-amber-800/80">Code:</span>{" "}
+                  <span className="text-amber-800/80">Code:</span>{' '}
                   <Badge>{currentConflict.newRecord.jobCode}</Badge>
                 </p>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => resolveConflict("skip")}>
+              <Button variant="outline" onClick={() => resolveConflict('skip')}>
                 Skip This CV
               </Button>
               <Button
-                onClick={() => resolveConflict("replace")}
+                onClick={() => resolveConflict('replace')}
                 className="bg-amber-500 hover:bg-amber-600"
               >
                 Replace Record
@@ -1378,8 +1378,8 @@ const BulkActions = ({
               </h4>
               <p className="text-sm text-muted-foreground">
                 {commonAssessments.length > 0
-                  ? "Showing assessments compatible with all selected candidates."
-                  : "Selected candidates have mixed job codes or are already in all compatible assessments."}
+                  ? 'Showing assessments compatible with all selected candidates.'
+                  : 'Selected candidates have mixed job codes or are already in all compatible assessments.'}
               </p>
             </div>
             <div className="max-h-64 overflow-y-auto">
@@ -1418,7 +1418,7 @@ const BulkActions = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the selected {selectedCount}{" "}
+              This will permanently delete the selected {selectedCount}{' '}
               candidate(s) and remove them from all assessments. This action
               cannot be undone.
             </AlertDialogDescription>
@@ -1427,7 +1427,7 @@ const BulkActions = ({
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => onDelete(selectedEmails)}
-              className={cn(Button, "bg-destructive hover:bg-destructive/90")}
+              className={cn(Button, 'bg-destructive hover:bg-destructive/90')}
             >
               Delete
             </AlertDialogAction>

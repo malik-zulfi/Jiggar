@@ -18,19 +18,28 @@ export async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
     } catch (error: any) {
       const errorMessage = (error.message || '').toLowerCase();
       // Check for a broader range of retryable, transient errors.
-      if (errorMessage.includes('503') || errorMessage.includes('overloaded') || errorMessage.includes('schema validation failed') || errorMessage.includes('fetch failed')) {
+      if (
+        errorMessage.includes('503') ||
+        errorMessage.includes('overloaded') ||
+        errorMessage.includes('schema validation failed') ||
+        errorMessage.includes('fetch failed')
+      ) {
         lastError = error;
         const delay = INITIAL_DELAY_MS * Math.pow(2, i);
-        console.log(`Attempt ${i + 1} failed with a transient error. Retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        console.log(
+          `Attempt ${i + 1} failed with a transient error. Retrying in ${delay}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
       } else {
         // If it's a different kind of error, rethrow it immediately
         throw error;
       }
     }
   }
-  
+
   // If all retries have been exhausted, throw the last captured error
-  console.error("All retry attempts failed. The last error was:", lastError);
-  throw new Error('The AI service is temporarily unavailable after multiple retries. Please try again later.');
+  console.error('All retry attempts failed. The last error was:', lastError);
+  throw new Error(
+    'The AI service is temporarily unavailable after multiple retries. Please try again later.'
+  );
 }

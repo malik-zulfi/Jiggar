@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import type { AnalyzedCandidate, CandidateRecord } from "@/lib/types";
+} from '@/components/ui/accordion';
+import * as AccordionPrimitive from '@radix-ui/react-accordion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import type { AnalyzedCandidate, CandidateRecord } from '@/lib/types';
 import {
   TrendingUp,
   Lightbulb,
@@ -21,20 +21,20 @@ import {
   RefreshCw,
   Briefcase,
   Edit3,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import AlignmentTable from "./alignment-table";
-import { Checkbox } from "@/components/ui/checkbox";
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import AlignmentTable from './alignment-table';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
-import React from "react";
+} from './ui/tooltip';
+import React from 'react';
 
 interface CandidateCardProps {
-  candidate: Omit<CandidateRecord, "cvContent" | "cvName">;
+  candidate: Omit<CandidateRecord, 'cvContent' | 'cvName'>;
   isStale?: boolean;
   isSelected?: boolean;
   onToggleSelect: () => void;
@@ -44,40 +44,40 @@ interface CandidateCardProps {
 }
 
 const getRecommendationInfo = (
-  recommendation: AnalyzedCandidate["recommendation"]
+  recommendation: AnalyzedCandidate['recommendation']
 ) => {
   switch (recommendation) {
-    case "Strongly Recommended":
+    case 'Strongly Recommended':
       return {
         icon: <ThumbsUp className="h-4 w-4" />,
         className:
-          "bg-primary text-primary-foreground border-transparent hover:bg-primary/90",
+          'bg-primary text-primary-foreground border-transparent hover:bg-primary/90',
       };
-    case "Recommended with Reservations":
+    case 'Recommended with Reservations':
       return {
         icon: <AlertTriangle className="h-4 w-4" />,
         className:
-          "bg-accent text-accent-foreground border-transparent hover:bg-accent/80",
+          'bg-accent text-accent-foreground border-transparent hover:bg-accent/80',
       };
-    case "Not Recommended":
+    case 'Not Recommended':
       return {
         icon: <ThumbsDown className="h-4 w-4" />,
         className:
-          "bg-destructive text-destructive-foreground border-transparent hover:bg-destructive/90",
+          'bg-destructive text-destructive-foreground border-transparent hover:bg-destructive/90',
       };
     default:
-      return { icon: null, className: "text-foreground border-border" };
+      return { icon: null, className: 'text-foreground border-border' };
   }
 };
 
 const getScoreBadgeClass = (score: number) => {
   if (score >= 75) {
-    return "bg-green-100 text-green-800 border-green-200 hover:bg-green-100/80";
+    return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100/80';
   }
   if (score >= 40) {
-    return "bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100/80";
+    return 'bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100/80';
   }
-  return "bg-red-100 text-red-800 border-red-200 hover:bg-red-100/80";
+  return 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100/80';
 };
 
 export default function CandidateCard({
@@ -104,8 +104,8 @@ export default function CandidateCard({
     };
 
     return [...analysis.alignmentDetails].sort((a, b) => {
-      const keyA = a.category.toLowerCase().replace(/\s+/g, "");
-      const keyB = b.category.toLowerCase().replace(/\s+/g, "");
+      const keyA = a.category.toLowerCase().replace(/\s+/g, '');
+      const keyB = b.category.toLowerCase().replace(/\s+/g, '');
       const indexA = desiredOrderMap[keyA] || 99;
       const indexB = desiredOrderMap[keyB] || 99;
       return indexA - indexB;
@@ -138,9 +138,9 @@ export default function CandidateCard({
             </span>
             <Badge
               className={cn(
-                "whitespace-nowrap font-bold",
+                'whitespace-nowrap font-bold',
                 getScoreBadgeClass(analysis.alignmentScore),
-                isEdited && "border-amber-500"
+                isEdited && 'border-amber-500'
               )}
             >
               <div className="flex items-center gap-1">
@@ -199,7 +199,7 @@ export default function CandidateCard({
               </Badge>
             )}
             <Badge
-              className={cn("whitespace-nowrap", recommendationInfo.className)}
+              className={cn('whitespace-nowrap', recommendationInfo.className)}
             >
               <div className="flex items-center gap-2">
                 {recommendationInfo.icon}
@@ -257,7 +257,7 @@ export default function CandidateCard({
             </div>
             <div>
               <h4 className="font-semibold mb-3 flex items-center text-base">
-                <ThumbsDown className="w-5 h-5 mr-2 text-destructive" />{" "}
+                <ThumbsDown className="w-5 h-5 mr-2 text-destructive" />{' '}
                 Weaknesses
               </h4>
               <ul className="list-disc list-outside pl-5 space-y-2 text-sm">

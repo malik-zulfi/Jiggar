@@ -7,8 +7,8 @@
  * - ParseCvOutput - The return type for the parseCv function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 import {
   ParseCvInputSchema,
   ParseCvOutputSchema,
@@ -20,7 +20,9 @@ export type { ParseCvOutput };
 
 const cvCache = new Map<string, ParseCvOutput>();
 
-export async function parseCv(input: { cvText: string }): Promise<ParseCvOutput> {
+export async function parseCv(input: {
+  cvText: string;
+}): Promise<ParseCvOutput> {
   const cacheKey = input.cvText;
   if (cvCache.has(cacheKey)) {
     return cvCache.get(cacheKey)!;
@@ -30,15 +32,19 @@ export async function parseCv(input: { cvText: string }): Promise<ParseCvOutput>
   const currentDate = now.toDateString();
   const experienceCalculatedAt = now.toISOString();
   const parseCvFlow = await createParseCvFlow();
-  const result = await parseCvFlow({ ...input, currentDate, experienceCalculatedAt });
+  const result = await parseCvFlow({
+    ...input,
+    currentDate,
+    experienceCalculatedAt,
+  });
   cvCache.set(cacheKey, result);
   return result;
 }
 
 const prompt = ai.definePrompt({
   name: 'parseCvPrompt',
-  input: {schema: ParseCvInputSchema},
-  output: {schema: ParseCvOutputSchema},
+  input: { schema: ParseCvInputSchema },
+  output: { schema: ParseCvOutputSchema },
   config: { temperature: 0.0 },
   prompt: `You are a world-class CV parsing engine. Your task is to meticulously analyze the provided CV text and extract key information into a structured JSON format.
 
@@ -78,10 +84,12 @@ export async function createParseCvFlow() {
       inputSchema: ParseCvInputSchema,
       outputSchema: ParseCvOutputSchema,
     },
-    async input => {
-      const {output} = await withRetry(() => prompt(input));
+    async (input) => {
+      const { output } = await withRetry(() => prompt(input));
       if (!output) {
-          throw new Error("CV parsing failed: The AI returned an empty or invalid response.");
+        throw new Error(
+          'CV parsing failed: The AI returned an empty or invalid response.'
+        );
       }
       // We no longer throw an error if email is missing, but the frontend will handle it.
       return output;

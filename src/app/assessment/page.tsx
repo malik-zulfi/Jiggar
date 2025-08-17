@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { Accordion } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Accordion } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -10,9 +10,9 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
 import {
   Loader2,
   Briefcase,
@@ -29,7 +29,7 @@ import {
   Wand2,
   AlertTriangle,
   Edit3,
-} from "lucide-react";
+} from 'lucide-react';
 
 import type {
   CandidateSummaryOutput,
@@ -43,20 +43,20 @@ import type {
   Requirement,
   RequirementGroup,
   AnalyzeCVAgainstJDOutput,
-} from "@/lib/types";
-import { analyzeCVAgainstJD } from "@/ai/flows/cv-analyzer";
-import { extractJDCriteria } from "@/ai/flows/jd-analyzer";
-import { summarizeCandidateAssessments } from "@/ai/flows/candidate-summarizer";
-import { parseCv } from "@/ai/flows/cv-parser";
+} from '@/lib/types';
+import { analyzeCVAgainstJD } from '@/ai/flows/cv-analyzer';
+import { extractJDCriteria } from '@/ai/flows/jd-analyzer';
+import { summarizeCandidateAssessments } from '@/ai/flows/candidate-summarizer';
+import { parseCv } from '@/ai/flows/cv-parser';
 
-import { Header } from "@/components/header";
-import JdAnalysis from "@/components/jd-analysis";
-import CandidateCard from "@/components/candidate-card";
-import SummaryDisplay from "@/components/summary-display";
-import FileUploader from "@/components/file-uploader";
-import ProgressLoader from "@/components/progress-loader";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Header } from '@/components/header';
+import JdAnalysis from '@/components/jd-analysis';
+import CandidateCard from '@/components/candidate-card';
+import SummaryDisplay from '@/components/summary-display';
+import FileUploader from '@/components/file-uploader';
+import ProgressLoader from '@/components/progress-loader';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -66,7 +66,7 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,10 +76,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/alert-dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -87,42 +87,42 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAppContext } from "@/components/client-provider";
+} from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAppContext } from '@/components/client-provider';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { v4 as uuidv4 } from "uuid";
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { v4 as uuidv4 } from 'uuid';
 
-const ACTIVE_SESSION_STORAGE_KEY = "jiggar-active-session";
-const PENDING_ASSESSMENT_KEY = "jiggar-pending-assessment";
+const ACTIVE_SESSION_STORAGE_KEY = 'jiggar-active-session';
+const PENDING_ASSESSMENT_KEY = 'jiggar-pending-assessment';
 
 type UploadedFile = { name: string; content: string };
 type CvProcessingStatus = Record<
   string,
   {
-    status: "processing" | "done" | "error";
+    status: 'processing' | 'done' | 'error';
     fileName: string;
     candidateName?: string;
   }
 >;
 type ReassessStatus = Record<
   string,
-  { status: "processing" | "done" | "error"; candidateName: string }
+  { status: 'processing' | 'done' | 'error'; candidateName: string }
 >;
 type ReplacementPrompt = {
   isOpen: boolean;
   existingSession: AssessmentSession | null;
   newJd: ExtractJDCriteriaOutput | null;
 };
-type JobCode = "OCN" | "WEX" | "SAN";
-type Priority = "MUST_HAVE" | "NICE_TO_HAVE";
+type JobCode = 'OCN' | 'WEX' | 'SAN';
+type Priority = 'MUST_HAVE' | 'NICE_TO_HAVE';
 
 function AssessmentPage() {
   const {
@@ -136,7 +136,7 @@ function AssessmentPage() {
   const { toast } = useToast();
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(
     new Set()
   );
@@ -175,8 +175,6 @@ function AssessmentPage() {
     resolve: (email: string) => void;
     reject: (reason?: any) => void;
   } | null>(null);
-
-  
 
   const activeSession = useMemo(
     () => history.find((s) => s.id === activeSessionId),
@@ -229,7 +227,7 @@ function AssessmentPage() {
     const statuses = Object.values(newCvProcessingStatus);
     if (
       statuses.length > 0 &&
-      statuses.every((s) => s.status === "done" || s.status === "error")
+      statuses.every((s) => s.status === 'done' || s.status === 'error')
     ) {
       const timer = setTimeout(() => {
         setNewCvProcessingStatus({});
@@ -265,13 +263,13 @@ function AssessmentPage() {
       sessionId: string | null,
       jobCode: string | null | undefined
     ) => {
-      if (!jobCode || !["OCN", "WEX", "SAN"].includes(jobCode)) {
+      if (!jobCode || !['OCN', 'WEX', 'SAN'].includes(jobCode)) {
         setTimeout(() => {
           toast({
-            variant: "destructive",
-            title: "Invalid Job Code",
+            variant: 'destructive',
+            title: 'Invalid Job Code',
             description:
-              "A valid job code (OCN, WEX, or SAN) is required to save new candidates.",
+              'A valid job code (OCN, WEX, or SAN) is required to save new candidates.',
           });
         }, 0);
         return;
@@ -279,7 +277,7 @@ function AssessmentPage() {
 
       const initialStatus = candidatesToProcess.reduce((acc, cv) => {
         acc[cv.name] = {
-          status: "processing",
+          status: 'processing',
           fileName: cv.name,
           candidateName: cv.name,
         };
@@ -305,7 +303,7 @@ function AssessmentPage() {
           } catch (parseError: any) {
             setTimeout(() => {
               toast({
-                variant: "destructive",
+                variant: 'destructive',
                 title: `CV Parsing Warning: ${cvFile.name}`,
                 description: `Could not reliably parse all CV data. Assessment will proceed with raw text.`,
               });
@@ -346,14 +344,14 @@ function AssessmentPage() {
               setEmailPrompt(null);
               setTimeout(() => {
                 toast({
-                  variant: "destructive",
+                  variant: 'destructive',
                   title: `Assessment Skipped for ${cvFile.name}`,
-                  description: "An email address was not provided.",
+                  description: 'An email address was not provided.',
                 });
               }, 0);
               setNewCvProcessingStatus((prev) => ({
                 ...prev,
-                [cvFile.name]: { ...prev[cvFile.name], status: "error" },
+                [cvFile.name]: { ...prev[cvFile.name], status: 'error' },
               }));
               continue; // Skip to the next file.
             }
@@ -386,7 +384,7 @@ function AssessmentPage() {
             ...prev,
             [cvFile.name]: {
               ...prev[cvFile.name],
-              status: "done",
+              status: 'done',
               candidateName: analysis.candidateName,
             },
           }));
@@ -395,14 +393,14 @@ function AssessmentPage() {
           console.error(`Error analyzing CV for ${cvFile.name}:`, error);
           setTimeout(() => {
             toast({
-              variant: "destructive",
+              variant: 'destructive',
               title: `Analysis Failed for ${cvFile.name}`,
-              description: error.message || "An unexpected error occurred.",
+              description: error.message || 'An unexpected error occurred.',
             });
           }, 0);
           setNewCvProcessingStatus((prev) => ({
             ...prev,
-            [cvFile.name]: { ...prev[cvFile.name], status: "error" },
+            [cvFile.name]: { ...prev[cvFile.name], status: 'error' },
           }));
         }
       }
@@ -426,7 +424,7 @@ function AssessmentPage() {
               if (newUniqueCandidates.length < finalCandidateRecords.length) {
                 setTimeout(() => {
                   toast({
-                    variant: "destructive",
+                    variant: 'destructive',
                     description: `Some candidates already existed in this session and were skipped.`,
                   });
                 }, 0);
@@ -512,7 +510,7 @@ function AssessmentPage() {
         });
       } catch (error) {
         console.error(
-          "Failed to process pending state from localStorage",
+          'Failed to process pending state from localStorage',
           error
         );
         localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
@@ -540,8 +538,8 @@ function AssessmentPage() {
 
       if (candidateDbRecords.length === 0) {
         toast({
-          variant: "destructive",
-          description: "Could not find candidate records in the database.",
+          variant: 'destructive',
+          description: 'Could not find candidate records in the database.',
         });
         return;
       }
@@ -569,7 +567,7 @@ function AssessmentPage() {
         )
       );
 
-      window.location.href = "/assessment";
+      window.location.href = '/assessment';
     },
     [cvDatabase, toast, setSuitablePositions]
   );
@@ -588,7 +586,7 @@ function AssessmentPage() {
     if (activeSessionId === sessionId) {
       setActiveSessionId(null);
     }
-    toast({ description: "Assessment deleted." });
+    toast({ description: 'Assessment deleted.' });
   };
 
   const handleReplaceJd = () => {
@@ -623,13 +621,13 @@ function AssessmentPage() {
     setJdFile(jdFile);
 
     const steps = [
-      "Initializing analysis engine...",
-      "Parsing job description document...",
-      "Extracting key responsibilities...",
-      "Extracting technical skill requirements...",
-      "Analyzing soft skill criteria...",
-      "Categorizing requirements by priority...",
-      "Finalizing analysis...",
+      'Initializing analysis engine...',
+      'Parsing job description document...',
+      'Extracting key responsibilities...',
+      'Extracting technical skill requirements...',
+      'Analyzing soft skill criteria...',
+      'Categorizing requirements by priority...',
+      'Finalizing analysis...',
     ];
     setJdAnalysisProgress({ steps, currentStepIndex: 0 });
     let simulationInterval: NodeJS.Timeout | null = setInterval(() => {
@@ -683,15 +681,15 @@ function AssessmentPage() {
       setHistory([newSession, ...history]);
       setActiveSessionId(newSession.id);
       setIsJdAnalysisOpen(true);
-      toast({ description: "Job Description analyzed successfully." });
+      toast({ description: 'Job Description analyzed successfully.' });
     } catch (error: any) {
-      console.error("Error analyzing JD:", error);
+      console.error('Error analyzing JD:', error);
       toast({
-        variant: "destructive",
-        title: "Analysis Error",
+        variant: 'destructive',
+        title: 'Analysis Error',
         description:
           error.message ||
-          "An unexpected error occurred. Please check the console.",
+          'An unexpected error occurred. Please check the console.',
       });
     } finally {
       if (simulationInterval) clearInterval(simulationInterval);
@@ -721,7 +719,7 @@ function AssessmentPage() {
     const initialStatus: ReassessStatus = candidatesToReassess.reduce(
       (acc, candidate) => {
         acc[candidate.analysis.candidateName] = {
-          status: "processing",
+          status: 'processing',
           candidateName: candidate.analysis.candidateName,
         };
         return acc;
@@ -759,7 +757,7 @@ function AssessmentPage() {
             ...prev,
             [candidate.analysis.candidateName]: {
               ...prev[candidate.analysis.candidateName],
-              status: "done",
+              status: 'done',
             },
           }));
           successCount++;
@@ -769,17 +767,17 @@ function AssessmentPage() {
             error
           );
           toast({
-            variant: "destructive",
+            variant: 'destructive',
             title: `Re-assessment Failed for ${candidate.analysis.candidateName}`,
             description:
               error.message ||
-              "An unexpected error occurred. Please check the console.",
+              'An unexpected error occurred. Please check the console.',
           });
           setReassessStatus((prev) => ({
             ...prev,
             [candidate.analysis.candidateName]: {
               ...prev[candidate.analysis.candidateName],
-              status: "error",
+              status: 'error',
             },
           }));
           updatedCandidates.push(candidate);
@@ -812,14 +810,14 @@ function AssessmentPage() {
         })
       );
       if (successCount > 0) {
-        toast({ description: "Candidates have been re-assessed." });
+        toast({ description: 'Candidates have been re-assessed.' });
       }
     } catch (error: any) {
-      console.error("Error re-assessing CVs:", error);
+      console.error('Error re-assessing CVs:', error);
       toast({
-        variant: "destructive",
-        title: "Re-assessment Error",
-        description: error.message || "An unexpected error occurred.",
+        variant: 'destructive',
+        title: 'Re-assessment Error',
+        description: error.message || 'An unexpected error occurred.',
       });
     } finally {
       setTimeout(() => {
@@ -840,9 +838,9 @@ function AssessmentPage() {
 
     if (candidatesToProcess.length === 0) {
       toast({
-        variant: "destructive",
-        title: "Cannot Re-assess",
-        description: "There are no candidates in this session to re-assess.",
+        variant: 'destructive',
+        title: 'Cannot Re-assess',
+        description: 'There are no candidates in this session to re-assess.',
       });
       return;
     }
@@ -853,15 +851,15 @@ function AssessmentPage() {
   const handleAnalyzeCvs = async () => {
     if (cvs.length === 0) {
       toast({
-        variant: "destructive",
-        description: "Please upload one or more CV files.",
+        variant: 'destructive',
+        description: 'Please upload one or more CV files.',
       });
       return;
     }
     if (!activeSession) {
       toast({
-        variant: "destructive",
-        description: "Please analyze a Job Description first.",
+        variant: 'destructive',
+        description: 'Please analyze a Job Description first.',
       });
       return;
     }
@@ -886,7 +884,7 @@ function AssessmentPage() {
 
     if (
       activeSession.analyzedJd.JobCode &&
-      activeSession.analyzedJd.JobCode !== "Not Found"
+      activeSession.analyzedJd.JobCode !== 'Not Found'
     ) {
       startAnalysis(activeSession.analyzedJd.JobCode as JobCode);
     } else {
@@ -911,9 +909,9 @@ function AssessmentPage() {
 
       if (newCvsToAdd.length < selectedCvsFromDb.length) {
         toast({
-          variant: "destructive",
+          variant: 'destructive',
           description:
-            "Some selected candidates are already in this session and were skipped.",
+            'Some selected candidates are already in this session and were skipped.',
         });
       }
 
@@ -949,13 +947,13 @@ function AssessmentPage() {
       return;
 
     const steps = [
-      "Initializing summary engine...",
-      "Reviewing all candidate assessments...",
-      "Identifying common strengths across pool...",
-      "Pinpointing common weaknesses and gaps...",
-      "Categorizing candidates into tiers...",
-      "Formulating interview strategy...",
-      "Finalizing summary report...",
+      'Initializing summary engine...',
+      'Reviewing all candidate assessments...',
+      'Identifying common strengths across pool...',
+      'Pinpointing common weaknesses and gaps...',
+      'Categorizing candidates into tiers...',
+      'Formulating interview strategy...',
+      'Finalizing summary report...',
     ];
     setSummaryProgress({ steps, currentStepIndex: 0 });
     let simulationInterval: NodeJS.Timeout | null = setInterval(() => {
@@ -999,13 +997,13 @@ function AssessmentPage() {
         })
       );
 
-      toast({ description: "Candidate summary generated." });
+      toast({ description: 'Candidate summary generated.' });
     } catch (error: any) {
-      console.error("Error generating summary:", error);
+      console.error('Error generating summary:', error);
       toast({
-        variant: "destructive",
-        title: "Summary Error",
-        description: error.message || "An unexpected error occurred.",
+        variant: 'destructive',
+        title: 'Summary Error',
+        description: error.message || 'An unexpected error occurred.',
       });
     } finally {
       if (simulationInterval) clearInterval(simulationInterval);
@@ -1057,8 +1055,8 @@ function AssessmentPage() {
 
   const handleRequirementChange = (
     category:
-      | keyof ExtractJDCriteriaOutput["Requirements"]
-      | "Responsibilities",
+      | keyof ExtractJDCriteriaOutput['Requirements']
+      | 'Responsibilities',
     reqId: string,
     newPriority: Priority
   ) => {
@@ -1074,33 +1072,46 @@ function AssessmentPage() {
         const processCategory = (
           cat:
             | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] } // For flat requirements
-            | { MUST_HAVE: RequirementGroup[]; NICE_TO_HAVE: RequirementGroup[] } // For grouped requirements
+            | {
+                MUST_HAVE: RequirementGroup[];
+                NICE_TO_HAVE: RequirementGroup[];
+              } // For grouped requirements
             | undefined
         ) => {
           if (!cat) return;
 
           const sourcePriority =
-            newPriority === "MUST_HAVE" ? "NICE_TO_HAVE" : "MUST_HAVE";
+            newPriority === 'MUST_HAVE' ? 'NICE_TO_HAVE' : 'MUST_HAVE';
           const targetPriority = newPriority;
 
           // Check if it's a grouped category
-          if (Array.isArray(cat.MUST_HAVE) && cat.MUST_HAVE.some((item: any) => 'groupType' in item)) {
+          if (
+            Array.isArray(cat.MUST_HAVE) &&
+            cat.MUST_HAVE.some((item: any) => 'groupType' in item)
+          ) {
             // It's a grouped category
             const sourceGroups = cat[sourcePriority] as RequirementGroup[];
             const targetGroups = cat[targetPriority] as RequirementGroup[];
 
             for (const group of sourceGroups) {
-              const reqIndex = group.requirements.findIndex((r) => r.id === reqId);
+              const reqIndex = group.requirements.findIndex(
+                (r) => r.id === reqId
+              );
               if (reqIndex > -1) {
                 const [reqToMove] = group.requirements.splice(reqIndex, 1);
                 reqToMove.priority = targetPriority;
-                reqToMove.score = targetPriority === "MUST_HAVE" ? 10 : 5;
-                
+                reqToMove.score = targetPriority === 'MUST_HAVE' ? 10 : 5;
+
                 // Add to a suitable group in targetGroups, or create a new one
-                let targetGroup = targetGroups.find(g => g.groupType === group.groupType);
+                let targetGroup = targetGroups.find(
+                  (g) => g.groupType === group.groupType
+                );
                 if (!targetGroup) {
-                    targetGroup = { groupType: group.groupType, requirements: [] };
-                    targetGroups.push(targetGroup);
+                  targetGroup = {
+                    groupType: group.groupType,
+                    requirements: [],
+                  };
+                  targetGroups.push(targetGroup);
                 }
                 targetGroup.requirements.push(reqToMove);
                 requirementFoundAndMoved = true;
@@ -1108,7 +1119,9 @@ function AssessmentPage() {
               }
             }
             // If requirement was moved from a group, and that group is now empty, remove it
-            cat[sourcePriority] = sourceGroups.filter(g => g.requirements.length > 0) as any; // Cast to any to satisfy type checker temporarily
+            cat[sourcePriority] = sourceGroups.filter(
+              (g) => g.requirements.length > 0
+            ) as any; // Cast to any to satisfy type checker temporarily
             cat[targetPriority] = targetGroups; // Update target
           } else {
             // It's a flat category
@@ -1119,7 +1132,7 @@ function AssessmentPage() {
             if (reqIndex > -1) {
               const [reqToMove] = sourceArray.splice(reqIndex, 1);
               reqToMove.priority = targetPriority;
-              reqToMove.score = targetPriority === "MUST_HAVE" ? 10 : 5;
+              reqToMove.score = targetPriority === 'MUST_HAVE' ? 10 : 5;
               targetArray.push(reqToMove);
               requirementFoundAndMoved = true;
             }
@@ -1170,8 +1183,8 @@ function AssessmentPage() {
 
   const handleScoreChange = (
     category:
-      | keyof ExtractJDCriteriaOutput["Requirements"]
-      | "Responsibilities",
+      | keyof ExtractJDCriteriaOutput['Requirements']
+      | 'Responsibilities',
     priority: Priority,
     reqId: string,
     newScore: number
@@ -1188,7 +1201,10 @@ function AssessmentPage() {
         const findAndUpdate = (
           cat:
             | { MUST_HAVE: Requirement[]; NICE_TO_HAVE: Requirement[] } // For flat requirements
-            | { MUST_HAVE: RequirementGroup[]; NICE_TO_HAVE: RequirementGroup[] } // For grouped requirements
+            | {
+                MUST_HAVE: RequirementGroup[];
+                NICE_TO_HAVE: RequirementGroup[];
+              } // For grouped requirements
             | undefined,
           priority: Priority,
           reqId: string,
@@ -1198,7 +1214,10 @@ function AssessmentPage() {
 
           const targetArray = cat[priority];
 
-          if (Array.isArray(targetArray) && targetArray.some((item: any) => 'groupType' in item)) {
+          if (
+            Array.isArray(targetArray) &&
+            targetArray.some((item: any) => 'groupType' in item)
+          ) {
             // It's a grouped category
             const groups = targetArray as RequirementGroup[];
             for (const group of groups) {
@@ -1238,8 +1257,16 @@ function AssessmentPage() {
           if (requirementFound) break;
         }
 
-        if (!requirementFound && priority === "NICE_TO_HAVE") {
-          findAndUpdate({ MUST_HAVE: [], NICE_TO_HAVE: newJd.Requirements.Experience.NICE_TO_HAVE }, priority, reqId, newScore);
+        if (!requirementFound && priority === 'NICE_TO_HAVE') {
+          findAndUpdate(
+            {
+              MUST_HAVE: [],
+              NICE_TO_HAVE: newJd.Requirements.Experience.NICE_TO_HAVE,
+            },
+            priority,
+            reqId,
+            newScore
+          );
         }
 
         if (requirementFound) {
@@ -1348,10 +1375,6 @@ function AssessmentPage() {
     });
   };
 
-  
-
-  
-
   const handleCandidateScoreUpdate = (
     candidateName: string,
     newAlignmentDetails: AlignmentDetail[]
@@ -1383,13 +1406,13 @@ function AssessmentPage() {
             ? parseFloat(((newCandidateScore / maxScore) * 100).toFixed(2))
             : 0;
 
-        let newRecommendation: AnalyzeCVAgainstJDOutput["recommendation"];
+        let newRecommendation: AnalyzeCVAgainstJDOutput['recommendation'];
         if (newAlignmentScore >= 85) {
-          newRecommendation = "Strongly Recommended";
+          newRecommendation = 'Strongly Recommended';
         } else if (newAlignmentScore >= 60) {
-          newRecommendation = "Recommended with Reservations";
+          newRecommendation = 'Recommended with Reservations';
         } else {
-          newRecommendation = "Not Recommended";
+          newRecommendation = 'Not Recommended';
         }
 
         const updatedAlignmentDetails = newAlignmentDetails.map((newDetail) => {
@@ -1437,13 +1460,13 @@ function AssessmentPage() {
     setEditingCandidate(null);
   };
 
-  const acceptedFileTypes = ".pdf,.docx,.txt";
+  const acceptedFileTypes = '.pdf,.docx,.txt';
   const isAssessingNewCvs = Object.keys(newCvProcessingStatus).length > 0;
   const isReassessing = Object.keys(reassessStatus).length > 0;
   const reassessButtonText =
     selectedCandidates.size > 0
       ? `Re-assess Selected (${selectedCandidates.size})`
-      : "Re-assess All";
+      : 'Re-assess All';
 
   const showReviewSection =
     (activeSession?.candidates?.length ?? 0) > 0 ||
@@ -1474,10 +1497,10 @@ function AssessmentPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Duplicate Position Found</AlertDialogTitle>
                 <AlertDialogDescription>
-                  An assessment for{" "}
+                  An assessment for{' '}
                   <span className="font-bold">
                     {replacementPrompt.existingSession?.analyzedJd.JobTitle}
-                  </span>{" "}
+                  </span>{' '}
                   already exists. Do you want to replace the old Job Description
                   with this new one? Existing candidates will be kept and marked
                   as stale for re-assessment.
@@ -1575,33 +1598,33 @@ function AssessmentPage() {
                           <CardHeader className="flex-1 p-4 bg-primary/5">
                             <CardTitle className="text-base font-semibold truncate">
                               {session.analyzedJd.PositionNumber &&
-                              session.analyzedJd.PositionNumber !== "Not Found"
+                              session.analyzedJd.PositionNumber !== 'Not Found'
                                 ? `${session.analyzedJd.PositionNumber} - `
-                                : ""}
+                                : ''}
                               {session.analyzedJd.JobTitle || session.jdName}
                             </CardTitle>
                             <CardDescription className="flex items-center gap-1.5 text-xs pt-1">
-                              <Users className="h-3.5 w-3.5" />{" "}
+                              <Users className="h-3.5 w-3.5" />{' '}
                               {session.candidates.length} Candidate(s)
                             </CardDescription>
                           </CardHeader>
                           <CardContent className="p-4 flex-1">
                             <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
                               {session.analyzedJd.JobCode &&
-                                session.analyzedJd.JobCode !== "Not Found" && (
+                                session.analyzedJd.JobCode !== 'Not Found' && (
                                   <Badge variant="secondary">
                                     {session.analyzedJd.JobCode}
                                   </Badge>
                                 )}
                               {session.analyzedJd.Department &&
                                 session.analyzedJd.Department !==
-                                  "Not Found" && (
+                                  'Not Found' && (
                                   <Badge variant="secondary">
                                     {session.analyzedJd.Department}
                                   </Badge>
                                 )}
                               {session.analyzedJd.PayGrade &&
-                                session.analyzedJd.PayGrade !== "Not Found" && (
+                                session.analyzedJd.PayGrade !== 'Not Found' && (
                                   <Badge variant="secondary">
                                     Grade {session.analyzedJd.PayGrade}
                                   </Badge>
@@ -1630,8 +1653,8 @@ function AssessmentPage() {
                       <div className="col-span-full text-center text-muted-foreground py-12">
                         <p>
                           {history.length > 0
-                            ? "No matching assessments found."
-                            : "No assessments yet."}
+                            ? 'No matching assessments found.'
+                            : 'No assessments yet.'}
                         </p>
                       </div>
                     )}
@@ -1667,9 +1690,9 @@ function AssessmentPage() {
                   </CardTitle>
                   <CardDescription>
                     Upload new CVs or add candidates from your database to
-                    assess them against this job description. Job Code:{" "}
+                    assess them against this job description. Job Code:{' '}
                     <Badge variant="secondary">
-                      {activeSession.analyzedJd.JobCode || "Not Set"}
+                      {activeSession.analyzedJd.JobCode || 'Not Set'}
                     </Badge>
                   </CardDescription>
                 </CardHeader>
@@ -1698,9 +1721,9 @@ function AssessmentPage() {
                           <Plus className="mr-2 h-4 w-4" />
                         )}
                         {isAssessingNewCvs
-                          ? "Assessing..."
+                          ? 'Assessing...'
                           : `Add & Assess ${
-                              cvs.length > 0 ? `(${cvs.length})` : ""
+                              cvs.length > 0 ? `(${cvs.length})` : ''
                             }`}
                       </Button>
                     </div>
@@ -1738,10 +1761,10 @@ function AssessmentPage() {
                         </CardTitle>
                         <CardDescription className="truncate">
                           {isAssessingNewCvs
-                            ? "Assessing new candidates..."
+                            ? 'Assessing new candidates...'
                             : isReassessing
-                            ? "Re-assessing candidates..."
-                            : "Review assessments, or re-assess candidates."}
+                              ? 'Re-assessing candidates...'
+                              : 'Review assessments, or re-assess candidates.'}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
@@ -1758,7 +1781,7 @@ function AssessmentPage() {
                                 <RefreshCw className="mr-2 h-4 w-4" />
                               )}
                               {isReassessing
-                                ? "Re-assessing..."
+                                ? 'Re-assessing...'
                                 : reassessButtonText}
                             </Button>
                           )}
@@ -1771,8 +1794,8 @@ function AssessmentPage() {
                         <ProgressLoader
                           title={
                             isReassessing
-                              ? "Re-assessing Candidate(s)"
-                              : "Assessing New Candidate(s)"
+                              ? 'Re-assessing Candidate(s)'
+                              : 'Assessing New Candidate(s)'
                           }
                           statusList={reassessStatusList || newCvStatusList!}
                         />
@@ -1782,7 +1805,7 @@ function AssessmentPage() {
                     {activeSession.candidates.length > 0 && (
                       <div
                         className={cn(
-                          isReassessing && "opacity-60 pointer-events-none"
+                          isReassessing && 'opacity-60 pointer-events-none'
                         )}
                       >
                         <Accordion
@@ -1844,8 +1867,8 @@ function AssessmentPage() {
                         >
                           <Wand2 className="mr-2 h-5 w-5" />
                           {activeSession.summary
-                            ? "Summary Generated"
-                            : "Generate Summary"}
+                            ? 'Summary Generated'
+                            : 'Generate Summary'}
                         </Button>
                       )}
                     </CardContent>
@@ -1869,11 +1892,11 @@ function AssessmentPage() {
               <EmailPromptDialog
                 isOpen={!!emailPrompt}
                 onClose={() =>
-                  emailPrompt?.reject(new Error("User cancelled email input."))
+                  emailPrompt?.reject(new Error('User cancelled email input.'))
                 }
                 onConfirm={(email) => emailPrompt?.resolve(email)}
                 candidateName={emailPrompt?.candidateName}
-                fileName={emailPrompt?.fileName || ""}
+                fileName={emailPrompt?.fileName || ''}
               />
             </div>
           )}
@@ -1895,10 +1918,10 @@ const AddFromDbDialog = ({
   onAdd: (selectedCvs: CvDatabaseRecord[]) => void;
 }) => {
   const [selectedCvs, setSelectedCvs] = useState<Set<string>>(new Set());
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   const compatibleCvs = useMemo(() => {
-    if (!jobCode || jobCode === "Not Found") return [];
+    if (!jobCode || jobCode === 'Not Found') return [];
     return allCvs.filter((cv) => cv.jobCode === jobCode);
   }, [allCvs, jobCode]);
 
@@ -1941,7 +1964,7 @@ const AddFromDbDialog = ({
     setSelectedCvs(new Set());
   };
 
-  if (!jobCode || jobCode === "Not Found") {
+  if (!jobCode || jobCode === 'Not Found') {
     return (
       <DialogContent>
         <DialogHeader>
@@ -1966,7 +1989,7 @@ const AddFromDbDialog = ({
       <DialogHeader>
         <DialogTitle>Add Candidates from Database</DialogTitle>
         <DialogDescription>
-          Select candidates from the database with job code{" "}
+          Select candidates from the database with job code{' '}
           <Badge>{jobCode}</Badge> to add to this assessment. Candidates already
           in this session are disabled.
         </DialogDescription>
@@ -2000,7 +2023,7 @@ const AddFromDbDialog = ({
                   <TableRow
                     key={cv.email}
                     className={cn(
-                      isInSession && "bg-muted/50 text-muted-foreground"
+                      isInSession && 'bg-muted/50 text-muted-foreground'
                     )}
                   >
                     <TableCell>
@@ -2012,7 +2035,7 @@ const AddFromDbDialog = ({
                     </TableCell>
                     <TableCell className="font-medium">{cv.name}</TableCell>
                     <TableCell>{cv.email}</TableCell>
-                    <TableCell>{cv.currentTitle || "N/A"}</TableCell>
+                    <TableCell>{cv.currentTitle || 'N/A'}</TableCell>
                   </TableRow>
                 );
               })
@@ -2110,7 +2133,7 @@ const EditScoreDialog = ({
   onSave: (candidateName: string, newDetails: AlignmentDetail[]) => void;
 }) => {
   const [editedDetails, setEditedDetails] = useState<AlignmentDetail[]>([]);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     if (candidate) {
@@ -2122,12 +2145,12 @@ const EditScoreDialog = ({
 
   const filteredAndIndexedDetails = useMemo(() => {
     const details =
-      filter === "issues"
+      filter === 'issues'
         ? editedDetails.filter(
             (d) =>
-              d.status === "Partially Aligned" ||
-              d.status === "Not Aligned" ||
-              d.status === "Not Mentioned"
+              d.status === 'Partially Aligned' ||
+              d.status === 'Not Aligned' ||
+              d.status === 'Not Mentioned'
           )
         : editedDetails;
 
@@ -2164,16 +2187,16 @@ const EditScoreDialog = ({
 
   const handleStatusChange = (
     originalIndex: number,
-    newStatus: AlignmentDetail["status"]
+    newStatus: AlignmentDetail['status']
   ) => {
     const newDetails = [...editedDetails];
     const detail = newDetails[originalIndex];
     const maxScore = detail.maxScore || 0;
 
     let newScore = detail.score;
-    if (newStatus === "Aligned") {
+    if (newStatus === 'Aligned') {
       newScore = maxScore;
-    } else if (newStatus === "Partially Aligned") {
+    } else if (newStatus === 'Partially Aligned') {
       newScore = Math.ceil(maxScore / 2);
     } else {
       newScore = 0;
@@ -2208,7 +2231,7 @@ const EditScoreDialog = ({
           <Label>Filter:</Label>
           <RadioGroup
             value={filter}
-            onValueChange={(value) => setFilter(value as "all" | "issues")}
+            onValueChange={(value) => setFilter(value as 'all' | 'issues')}
             className="flex items-center"
           >
             <div className="flex items-center space-x-2">
@@ -2244,12 +2267,12 @@ const EditScoreDialog = ({
                   <TableCell>
                     <Badge
                       variant={
-                        detail.priority === "MUST_HAVE"
-                          ? "outline"
-                          : "secondary"
+                        detail.priority === 'MUST_HAVE'
+                          ? 'outline'
+                          : 'secondary'
                       }
                     >
-                      {detail.priority.replace("_", " ")}
+                      {detail.priority.replace('_', ' ')}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -2258,7 +2281,7 @@ const EditScoreDialog = ({
                       onValueChange={(newStatus) =>
                         handleStatusChange(
                           detail.originalIndex,
-                          newStatus as AlignmentDetail["status"]
+                          newStatus as AlignmentDetail['status']
                         )
                       }
                     >
@@ -2281,7 +2304,7 @@ const EditScoreDialog = ({
                     <div className="flex items-center justify-end gap-2">
                       <Input
                         type="number"
-                        value={detail.score ?? ""}
+                        value={detail.score ?? ''}
                         onChange={(e) =>
                           handleScoreChange(
                             detail.originalIndex,
@@ -2324,27 +2347,27 @@ const EmailPromptDialog = ({
   candidateName?: string;
   fileName: string;
 }) => {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
 
   const handleConfirm = () => {
     if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       onConfirm(email);
     } else {
-      setError("Please enter a valid email address.");
+      setError('Please enter a valid email address.');
     }
   };
 
   const handleClose = () => {
-    setEmail("");
-    setError("");
+    setEmail('');
+    setError('');
     onClose();
   };
 
   useEffect(() => {
     if (!isOpen) {
-      setEmail("");
-      setError("");
+      setEmail('');
+      setError('');
     }
   }, [isOpen]);
 
@@ -2369,7 +2392,7 @@ const EmailPromptDialog = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="candidate@example.com"
-            className={cn(error && "border-destructive")}
+            className={cn(error && 'border-destructive')}
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>

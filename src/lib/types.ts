@@ -1,38 +1,38 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const RequirementSchema = z.object({
   id: z
     .string()
     .describe("A unique identifier for the requirement, e.g., 'req-1'."),
-  description: z.string().describe("The text of the requirement."),
+  description: z.string().describe('The text of the requirement.'),
   priority: z
-    .enum(["MUST_HAVE", "NICE_TO_HAVE"])
-    .describe("The priority of the requirement."),
-  score: z.number().describe("The point value assigned to this requirement."),
+    .enum(['MUST_HAVE', 'NICE_TO_HAVE'])
+    .describe('The priority of the requirement.'),
+  score: z.number().describe('The point value assigned to this requirement.'),
   originalScore: z
     .number()
     .describe(
-      "The original point value assigned by the AI to track user edits."
+      'The original point value assigned by the AI to track user edits.'
     ),
   originalPriority: z
-    .enum(["MUST_HAVE", "NICE_TO_HAVE"])
-    .describe("The original priority to track user edits."),
+    .enum(['MUST_HAVE', 'NICE_TO_HAVE'])
+    .describe('The original priority to track user edits.'),
   isUserAdded: z
     .boolean()
     .optional()
-    .describe("A flag to indicate if the requirement was added by the user."),
+    .describe('A flag to indicate if the requirement was added by the user.'),
 });
 export type Requirement = z.infer<typeof RequirementSchema>;
 
 export const RequirementGroupSchema = z.object({
   groupType: z
-    .enum(["ANY", "ALL"])
+    .enum(['ANY', 'ALL'])
     .describe(
-      "Defines if the candidate must meet ANY or ALL of the requirements in this group."
+      'Defines if the candidate must meet ANY or ALL of the requirements in this group.'
     ),
   requirements: z
     .array(RequirementSchema)
-    .describe("The list of requirements within this group."),
+    .describe('The list of requirements within this group.'),
 });
 export type RequirementGroup = z.infer<typeof RequirementGroupSchema>;
 
@@ -41,43 +41,43 @@ const OrganizationalRelationshipSchema = z
   .object({
     ReportsTo: z
       .array(z.string())
-      .describe("List of roles this position reports to."),
+      .describe('List of roles this position reports to.'),
     InterfacesWith: z
       .array(z.string())
-      .describe("List of roles/departments this position interfaces with."),
+      .describe('List of roles/departments this position interfaces with.'),
   })
   .describe("Defines the position's place in the organization.");
 
 const RequirementsSubSchema = z.object({
   MUST_HAVE: z
     .array(RequirementSchema)
-    .describe("List of must-have requirements for this category."),
+    .describe('List of must-have requirements for this category.'),
   NICE_TO_HAVE: z
     .array(RequirementSchema)
-    .describe("List of nice-to-have requirements for this category."),
+    .describe('List of nice-to-have requirements for this category.'),
 });
 
 const GroupedRequirementsSubSchema = z.object({
   MUST_HAVE: z
     .array(RequirementGroupSchema)
-    .describe("List of must-have requirement groups for this category."),
+    .describe('List of must-have requirement groups for this category.'),
   NICE_TO_HAVE: z
     .array(RequirementGroupSchema)
-    .describe("List of nice-to-have requirement groups for this category."),
+    .describe('List of nice-to-have requirement groups for this category.'),
 });
 
 const ExperienceSchema = z.object({
   MUST_HAVE: z.object({
     Years: z
       .string()
-      .describe("The minimum number of years of experience required."),
+      .describe('The minimum number of years of experience required.'),
     Fields: z
       .array(z.string())
-      .describe("The specific fields or domains of experience required."),
+      .describe('The specific fields or domains of experience required.'),
   }),
   NICE_TO_HAVE: z
     .array(RequirementSchema)
-    .describe("Nice-to-have experience requirements."),
+    .describe('Nice-to-have experience requirements.'),
 });
 
 const RequirementsSchema = z
@@ -89,7 +89,7 @@ const RequirementsSchema = z
     Certifications: GroupedRequirementsSubSchema,
     AdditionalRequirements: RequirementsSubSchema.optional(),
   })
-  .describe("Detailed breakdown of all job requirements.");
+  .describe('Detailed breakdown of all job requirements.');
 
 export const ExtractJDCriteriaOutputSchema = z.object({
   PositionNumber: z
@@ -122,7 +122,7 @@ export const ExtractJDCriteriaOutputSchema = z.object({
     .describe("The date the JD was approved. 'Not Found' if not available."),
   PrincipalObjective: z
     .string()
-    .describe("The principal objective or summary of the job."),
+    .describe('The principal objective or summary of the job.'),
   OrganizationalRelationship: OrganizationalRelationshipSchema,
   Responsibilities: RequirementsSubSchema,
   Requirements: RequirementsSchema,
@@ -136,43 +136,45 @@ export const AlignmentDetailSchema = z.object({
   category: z
     .string()
     .describe(
-      "The category of the requirement (e.g., Technical Skills, Experience)."
+      'The category of the requirement (e.g., Technical Skills, Experience).'
     ),
   requirement: z
     .string()
     .describe(
-      "The specific requirement from the job description. For grouped requirements, this will be a summary of the group."
+      'The specific requirement from the job description. For grouped requirements, this will be a summary of the group.'
     ),
   priority: z
-    .enum(["MUST_HAVE", "NICE_TO_HAVE"])
-    .describe("Priority of the requirement."),
+    .enum(['MUST_HAVE', 'NICE_TO_HAVE'])
+    .describe('Priority of the requirement.'),
   status: z
-    .enum(["Aligned", "Partially Aligned", "Not Aligned", "Not Mentioned"])
-    .describe("The alignment status of the candidate for this requirement."),
+    .enum(['Aligned', 'Partially Aligned', 'Not Aligned', 'Not Mentioned'])
+    .describe('The alignment status of the candidate for this requirement.'),
   justification: z
     .string()
     .describe(
-      "A brief justification for the alignment status, with evidence from the CV."
+      'A brief justification for the alignment status, with evidence from the CV.'
     ),
   score: z
     .number()
     .optional()
-    .describe("The score awarded for this specific requirement."),
+    .describe('The score awarded for this specific requirement.'),
   maxScore: z
     .number()
     .optional()
-    .describe("The maximum possible score for this requirement."),
+    .describe('The maximum possible score for this requirement.'),
   isEdited: z
     .boolean()
     .optional()
-    .describe("A flag to indicate if the alignment detail has been manually edited."),
+    .describe(
+      'A flag to indicate if the alignment detail has been manually edited.'
+    ),
 });
 export type AlignmentDetail = z.infer<typeof AlignmentDetailSchema>;
 
 export const AnalyzeCVAgainstJDOutputSchema = z.object({
   candidateName: z
     .string()
-    .describe("The full name of the candidate as extracted from the CV."),
+    .describe('The full name of the candidate as extracted from the CV.'),
   email: z
     .string()
     .optional()
@@ -187,18 +189,18 @@ export const AnalyzeCVAgainstJDOutputSchema = z.object({
   experienceCalculatedAt: z
     .string()
     .optional()
-    .describe("The date when the total experience was calculated."),
+    .describe('The date when the total experience was calculated.'),
   alignmentScore: z
     .number()
-    .describe("The overall alignment score of the candidate, from 0 to 100."),
+    .describe('The overall alignment score of the candidate, from 0 to 100.'),
   candidateScore: z
     .number()
     .optional()
-    .describe("The raw score awarded to the candidate."),
+    .describe('The raw score awarded to the candidate.'),
   maxScore: z
     .number()
     .optional()
-    .describe("The maximum possible raw score for the assessment."),
+    .describe('The maximum possible raw score for the assessment.'),
   alignmentSummary: z
     .string()
     .describe(
@@ -206,27 +208,27 @@ export const AnalyzeCVAgainstJDOutputSchema = z.object({
     ),
   alignmentDetails: z
     .array(AlignmentDetailSchema)
-    .describe("A detailed, requirement-by-requirement alignment analysis."),
+    .describe('A detailed, requirement-by-requirement alignment analysis.'),
   recommendation: z
     .enum([
-      "Strongly Recommended",
-      "Recommended with Reservations",
-      "Not Recommended",
+      'Strongly Recommended',
+      'Recommended with Reservations',
+      'Not Recommended',
     ])
-    .describe("The recommendation for the candidate."),
-  strengths: z.array(z.string()).describe("The strengths of the candidate."),
-  weaknesses: z.array(z.string()).describe("The weaknesses of the candidate."),
+    .describe('The recommendation for the candidate.'),
+  strengths: z.array(z.string()).describe('The strengths of the candidate.'),
+  weaknesses: z.array(z.string()).describe('The weaknesses of the candidate.'),
   interviewProbes: z
     .array(z.string())
-    .describe("Suggested interview probes to explore weak areas."),
+    .describe('Suggested interview probes to explore weak areas.'),
   processingTime: z
     .number()
     .optional()
-    .describe("The time taken to process the CV in seconds."),
+    .describe('The time taken to process the CV in seconds.'),
   isEdited: z
     .boolean()
     .optional()
-    .describe("A flag to indicate if the assessment has been manually edited."),
+    .describe('A flag to indicate if the assessment has been manually edited.'),
 });
 export type AnalyzeCVAgainstJDOutput = z.infer<
   typeof AnalyzeCVAgainstJDOutputSchema
@@ -235,37 +237,37 @@ export type AnalyzedCandidate = z.infer<typeof AnalyzeCVAgainstJDOutputSchema>;
 
 // For Candidate Summarizer
 export const CandidateAssessmentSchema = z.object({
-  candidateName: z.string().describe("The name of the candidate."),
-  alignmentScore: z.number().describe("The alignment score of the candidate."),
+  candidateName: z.string().describe('The name of the candidate.'),
+  alignmentScore: z.number().describe('The alignment score of the candidate.'),
   recommendation: z
     .enum([
-      "Strongly Recommended",
-      "Recommended with Reservations",
-      "Not Recommended",
+      'Strongly Recommended',
+      'Recommended with Reservations',
+      'Not Recommended',
     ])
-    .describe("The overall recommendation for the candidate."),
+    .describe('The overall recommendation for the candidate.'),
   strengths: z
     .array(z.string())
-    .describe("A list of strengths of the candidate."),
+    .describe('A list of strengths of the candidate.'),
   weaknesses: z
     .array(z.string())
-    .describe("A list of weaknesses of the candidate."),
+    .describe('A list of weaknesses of the candidate.'),
   interviewProbes: z
     .array(z.string())
-    .describe("Suggested interview probes to explore weak/unclear areas."),
+    .describe('Suggested interview probes to explore weak/unclear areas.'),
 });
 
 export const CandidateSummaryOutputSchema = z.object({
-  topTier: z.array(z.string()).describe("Candidates categorized as Top Tier."),
-  midTier: z.array(z.string()).describe("Candidates categorized as Mid Tier."),
+  topTier: z.array(z.string()).describe('Candidates categorized as Top Tier.'),
+  midTier: z.array(z.string()).describe('Candidates categorized as Mid Tier.'),
   notSuitable: z
     .array(z.string())
-    .describe("Candidates categorized as Not Suitable."),
+    .describe('Candidates categorized as Not Suitable.'),
   commonStrengths: z
     .array(z.string())
-    .describe("Common strengths among the candidates."),
-  commonGaps: z.array(z.string()).describe("Common gaps among the candidates."),
-  interviewStrategy: z.string().describe("A suggested interview strategy."),
+    .describe('Common strengths among the candidates.'),
+  commonGaps: z.array(z.string()).describe('Common gaps among the candidates.'),
+  interviewStrategy: z.string().describe('A suggested interview strategy.'),
 });
 export type CandidateSummaryOutput = z.infer<
   typeof CandidateSummaryOutputSchema
@@ -282,13 +284,13 @@ export const OcrInputSchema = z.object({
 export type OcrInput = z.infer<typeof OcrInputSchema>;
 
 export const OcrOutputSchema = z.object({
-  text: z.string().describe("The extracted text from the image."),
+  text: z.string().describe('The extracted text from the image.'),
 });
 export type OcrOutput = z.infer<typeof OcrOutputSchema>;
 
 // For Name Extractor
 export const ExtractCandidateNameInputSchema = z.object({
-  cvText: z.string().describe("The full text content of the CV."),
+  cvText: z.string().describe('The full text content of the CV.'),
 });
 export type ExtractCandidateNameInput = z.infer<
   typeof ExtractCandidateNameInputSchema
@@ -297,7 +299,7 @@ export type ExtractCandidateNameInput = z.infer<
 export const ExtractCandidateNameOutputSchema = z.object({
   candidateName: z
     .string()
-    .describe("The extracted full name of the candidate."),
+    .describe('The extracted full name of the candidate.'),
 });
 export type ExtractCandidateNameOutput = z.infer<
   typeof ExtractCandidateNameOutputSchema
@@ -305,7 +307,7 @@ export type ExtractCandidateNameOutput = z.infer<
 
 // For Global Knowledge Base Query
 export const ChatMessageSchema = z.object({
-  role: z.enum(["user", "assistant"]),
+  role: z.enum(['user', 'assistant']),
   content: z.string(),
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
@@ -315,20 +317,20 @@ export const QueryKnowledgeBaseInputSchema = z.object({
   sessions: z
     .array(z.lazy(() => AssessmentSessionSchema))
     .describe(
-      "The entire history of assessment sessions, including all JDs and candidates."
+      'The entire history of assessment sessions, including all JDs and candidates.'
     ),
   cvDatabase: z
     .array(z.lazy(() => CvDatabaseRecordSchema))
     .describe(
-      "The central database of all parsed CVs, including those not yet assessed."
+      'The central database of all parsed CVs, including those not yet assessed.'
     ),
   chatHistory: z
     .array(ChatMessageSchema)
     .optional()
-    .describe("The history of the current conversation."),
+    .describe('The history of the current conversation.'),
   currentDate: z
     .string()
-    .describe("The current date, for calculating up-to-date experience."),
+    .describe('The current date, for calculating up-to-date experience.'),
 });
 export type QueryKnowledgeBaseInput = z.infer<
   typeof QueryKnowledgeBaseInputSchema
@@ -337,7 +339,7 @@ export type QueryKnowledgeBaseInput = z.infer<
 export const QueryKnowledgeBaseOutputSchema = z.object({
   answer: z
     .string()
-    .describe("The answer to the user query based on the provided data."),
+    .describe('The answer to the user query based on the provided data.'),
 });
 export type QueryKnowledgeBaseOutput = z.infer<
   typeof QueryKnowledgeBaseOutputSchema
@@ -367,7 +369,7 @@ export const StructuredCvContentSchema = z.object({
   summary: z
     .string()
     .optional()
-    .describe("Professional summary or objective from the CV."),
+    .describe('Professional summary or objective from the CV.'),
   experience: z
     .array(
       z.object({
@@ -379,7 +381,7 @@ export const StructuredCvContentSchema = z.object({
       })
     )
     .optional()
-    .describe("Detailed work experience."),
+    .describe('Detailed work experience.'),
   education: z
     .array(
       z.object({
@@ -389,8 +391,8 @@ export const StructuredCvContentSchema = z.object({
       })
     )
     .optional()
-    .describe("Educational background."),
-  skills: z.array(z.string()).optional().describe("List of skills."),
+    .describe('Educational background.'),
+  skills: z.array(z.string()).optional().describe('List of skills.'),
   projects: z
     .array(
       z.object({
@@ -400,7 +402,7 @@ export const StructuredCvContentSchema = z.object({
       })
     )
     .optional()
-    .describe("Projects listed on the CV."),
+    .describe('Projects listed on the CV.'),
 });
 export type StructuredCvContent = z.infer<typeof StructuredCvContentSchema>;
 
@@ -424,18 +426,18 @@ export const CvDatabaseRecordSchema = z.object({
     .string()
     .nullable()
     .optional()
-    .describe("Total years of professional experience calculated from the CV."),
+    .describe('Total years of professional experience calculated from the CV.'),
   experienceCalculatedAt: z
     .string()
     .optional()
-    .describe("ISO date string for when experience was calculated."),
+    .describe('ISO date string for when experience was calculated.'),
   jobCode: z
-    .enum(["OCN", "WEX", "SAN"])
-    .describe("Job code associated with this CV upload."),
-  cvFileName: z.string().describe("Original filename of the CV."),
-  cvContent: z.string().describe("Full text content of the CV."),
+    .enum(['OCN', 'WEX', 'SAN'])
+    .describe('Job code associated with this CV upload.'),
+  cvFileName: z.string().describe('Original filename of the CV.'),
+  cvContent: z.string().describe('Full text content of the CV.'),
   structuredContent: StructuredCvContentSchema.describe(
-    "The CV content, broken down into a structured format."
+    'The CV content, broken down into a structured format.'
   ),
   createdAt: z.string().datetime(),
 });
@@ -443,7 +445,7 @@ export type CvDatabaseRecord = z.infer<typeof CvDatabaseRecordSchema>;
 
 // Input for the new CV Parser flow
 export const ParseCvInputSchema = z.object({
-  cvText: z.string().describe("The full text content of the CV."),
+  cvText: z.string().describe('The full text content of the CV.'),
   currentDate: z
     .string()
     .describe(
@@ -452,7 +454,7 @@ export const ParseCvInputSchema = z.object({
   experienceCalculatedAt: z
     .string()
     .describe(
-      "The ISO date string of when this calculation is being performed."
+      'The ISO date string of when this calculation is being performed.'
     ),
 });
 export type ParseCvInput = z.infer<typeof ParseCvInputSchema>;
@@ -476,10 +478,10 @@ export type SuitablePosition = {
 export const FindSuitablePositionsInputSchema = z.object({
   candidates: z
     .array(CvDatabaseRecordSchema)
-    .describe("The candidates to find positions for."),
+    .describe('The candidates to find positions for.'),
   assessmentSessions: z
     .array(AssessmentSessionSchema)
-    .describe("A list of all available assessment sessions (jobs)."),
+    .describe('A list of all available assessment sessions (jobs).'),
   existingSuitablePositions: z
     .array(
       z.object({
@@ -490,7 +492,7 @@ export const FindSuitablePositionsInputSchema = z.object({
       })
     )
     .describe(
-      "A list of positions already identified as suitable to avoid duplicates."
+      'A list of positions already identified as suitable to avoid duplicates.'
     ),
 });
 export type FindSuitablePositionsInput = z.infer<
@@ -508,7 +510,7 @@ export const FindSuitablePositionsOutputSchema = z.object({
       })
     )
     .describe(
-      "A list of newly identified suitable positions for the candidate."
+      'A list of newly identified suitable positions for the candidate.'
     ),
 });
 export type FindSuitablePositionsOutput = z.infer<

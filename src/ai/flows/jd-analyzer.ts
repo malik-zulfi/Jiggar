@@ -8,12 +8,12 @@
  * - ExtractJDCriteriaOutput - The return type for the extractJDCriteria function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-import { 
-    ExtractJDCriteriaOutputSchema, 
-    type ExtractJDCriteriaOutput,
-    RequirementGroupSchema,
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import {
+  ExtractJDCriteriaOutputSchema,
+  type ExtractJDCriteriaOutput,
+  RequirementGroupSchema,
 } from '@/lib/types';
 import { withRetry } from '@/lib/retry';
 import { randomUUID } from 'crypto';
@@ -21,7 +21,9 @@ import { randomUUID } from 'crypto';
 const ExtractJDCriteriaInputSchema = z.object({
   jobDescription: z.string().describe('The Job Description to analyze.'),
 });
-export type ExtractJDCriteriaInput = z.infer<typeof ExtractJDCriteriaInputSchema>;
+export type ExtractJDCriteriaInput = z.infer<
+  typeof ExtractJDCriteriaInputSchema
+>;
 
 export type { ExtractJDCriteriaOutput };
 
@@ -33,7 +35,9 @@ const jdCache = new Map<string, ExtractJDCriteriaOutput>();
  * @param input - The input containing the job description text.
  * @returns A promise that resolves to the ExtractJDCriteriaOutput.
  */
-export async function extractJDCriteria(input: ExtractJDCriteriaInput): Promise<ExtractJDCriteriaOutput> {
+export async function extractJDCriteria(
+  input: ExtractJDCriteriaInput
+): Promise<ExtractJDCriteriaOutput> {
   const cacheKey = input.jobDescription;
   if (jdCache.has(cacheKey)) {
     return jdCache.get(cacheKey)!;
@@ -47,8 +51,8 @@ export async function extractJDCriteria(input: ExtractJDCriteriaInput): Promise<
 
 const prompt = ai.definePrompt({
   name: 'extractJDCriteriaPromptV4',
-  input: {schema: ExtractJDCriteriaInputSchema},
-  output: {schema: ExtractJDCriteriaOutputSchema},
+  input: { schema: ExtractJDCriteriaInputSchema },
+  output: { schema: ExtractJDCriteriaOutputSchema },
   config: { temperature: 0.0 },
   prompt: `You are an expert recruitment data analyst. Your task is to meticulously deconstruct a job description into a structured JSON format.
 
@@ -66,7 +70,7 @@ const prompt = ai.definePrompt({
 ---
 
 Now, analyze the job description and return the full JSON object.
-`
+`,
 });
 
 /**
@@ -83,6 +87,9 @@ async function createExtractJDCriteriaFlow() {
     },
     async (input) => {
       const { output } = await withRetry(() => prompt(input));
+      if (!output) {
+        throw new Error('Failed to extract JD criteria after multiple retries.');
+      }
       return output;
     }
   );

@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -10,25 +9,28 @@
  * - CandidateSummaryOutput - The return type for the summarizeCandidateAssessments function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'zod';
+import { ai } from '@/ai/genkit';
+import { z } from 'zod';
 import {
-    CandidateSummaryOutputSchema,
-    CandidateAssessmentSchema, // Using the more granular schema
-    ExtractJDCriteriaOutputSchema,
-    type CandidateSummaryOutput,
+  CandidateSummaryOutputSchema,
+  CandidateAssessmentSchema, // Using the more granular schema
+  ExtractJDCriteriaOutputSchema,
+  type CandidateSummaryOutput,
 } from '@/lib/types';
 import { withRetry } from '@/lib/retry';
 
 // Define the input schema for this flow
 const CandidateSummaryInputSchema = z.object({
-  jobDescriptionCriteria: ExtractJDCriteriaOutputSchema.describe("The full structured job description criteria."),
-  candidateAssessments: z.array(CandidateAssessmentSchema).describe('An array of candidate assessments.'),
+  jobDescriptionCriteria: ExtractJDCriteriaOutputSchema.describe(
+    'The full structured job description criteria.'
+  ),
+  candidateAssessments: z
+    .array(CandidateAssessmentSchema)
+    .describe('An array of candidate assessments.'),
 });
 
 export type CandidateSummaryInput = z.infer<typeof CandidateSummaryInputSchema>;
 export type { CandidateSummaryOutput };
-
 
 /**
  * Summarizes candidate assessments, categorizes candidates into tiers,
@@ -36,15 +38,18 @@ export type { CandidateSummaryOutput };
  * @param input - The input for the summarization process.
  * @returns A promise that resolves to the CandidateSummaryOutput.
  */
-export async function summarizeCandidateAssessments(input: CandidateSummaryInput): Promise<CandidateSummaryOutput> {
-  const summarizeCandidateAssessmentsFlow = await createSummarizeCandidateAssessmentsFlow();
+export async function summarizeCandidateAssessments(
+  input: CandidateSummaryInput
+): Promise<CandidateSummaryOutput> {
+  const summarizeCandidateAssessmentsFlow =
+    await createSummarizeCandidateAssessmentsFlow();
   return summarizeCandidateAssessmentsFlow(input);
 }
 
 const prompt = ai.definePrompt({
   name: 'summarizeCandidateAssessmentsPrompt',
-  input: {schema: CandidateSummaryInputSchema},
-  output: {schema: CandidateSummaryOutputSchema},
+  input: { schema: CandidateSummaryInputSchema },
+  output: { schema: CandidateSummaryOutputSchema },
   config: { temperature: 0.0 },
   prompt: `You are a hiring manager summarizing candidate assessments for a job.
 
@@ -86,8 +91,8 @@ export async function createSummarizeCandidateAssessmentsFlow() {
       inputSchema: CandidateSummaryInputSchema,
       outputSchema: CandidateSummaryOutputSchema,
     },
-    async input => {
-      const {output} = await withRetry(() => prompt(input));
+    async (input) => {
+      const { output } = await withRetry(() => prompt(input));
       return output!;
     }
   );

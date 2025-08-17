@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Answers user queries about the entire knowledge base of JDs and CVs.
@@ -8,14 +7,14 @@
  * - QueryKnowledgeBaseOutput - The return type for the queryKnowledgeBase function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'zod';
+import { ai } from '@/ai/genkit';
+import { z } from 'zod';
 import {
-    QueryKnowledgeBaseInputSchema,
-    QueryKnowledgeBaseOutputSchema,
-    type ChatMessage,
-    type QueryKnowledgeBaseInput,
-    type QueryKnowledgeBaseOutput,
+  QueryKnowledgeBaseInputSchema,
+  QueryKnowledgeBaseOutputSchema,
+  type ChatMessage,
+  type QueryKnowledgeBaseInput,
+  type QueryKnowledgeBaseOutput,
 } from '@/lib/types';
 import { withRetry } from '@/lib/retry';
 
@@ -26,7 +25,9 @@ export type { QueryKnowledgeBaseInput, QueryKnowledgeBaseOutput };
  * @param input - The input for the query process, excluding currentDate.
  * @returns A promise that resolves to the QueryKnowledgeBaseOutput.
  */
-export async function queryKnowledgeBase(input: Omit<QueryKnowledgeBaseInput, 'currentDate'>): Promise<QueryKnowledgeBaseOutput> {
+export async function queryKnowledgeBase(
+  input: Omit<QueryKnowledgeBaseInput, 'currentDate'>
+): Promise<QueryKnowledgeBaseOutput> {
   return queryKnowledgeBaseFlow({
     ...input,
     currentDate: new Date().toDateString(),
@@ -34,16 +35,20 @@ export async function queryKnowledgeBase(input: Omit<QueryKnowledgeBaseInput, 'c
 }
 
 const SummarizedDataSchema = z.object({
-    query: z.string(),
-    chatHistory: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })).optional(),
-    knowledgeBase: z.any(), // Using any to avoid schema complexity in the prompt definition
-    currentDate: z.string(),
+  query: z.string(),
+  chatHistory: z
+    .array(
+      z.object({ role: z.enum(['user', 'assistant']), content: z.string() })
+    )
+    .optional(),
+  knowledgeBase: z.any(), // Using any to avoid schema complexity in the prompt definition
+  currentDate: z.string(),
 });
 
 const prompt = ai.definePrompt({
   name: 'queryKnowledgeBasePrompt',
-  input: {schema: SummarizedDataSchema},
-  output: {schema: QueryKnowledgeBaseOutputSchema},
+  input: { schema: SummarizedDataSchema },
+  output: { schema: QueryKnowledgeBaseOutputSchema },
   config: { temperature: 0.0 },
   prompt: `You are an expert recruitment data analyst. Your task is to answer a specific question based on the entire knowledge base provided to you, maintaining the context of the ongoing conversation.
 
@@ -94,55 +99,57 @@ Your answer must be helpful and directly address the user's question, using only
  * @returns A promise that resolves to the QueryKnowledgeBaseOutput.
  */
 const queryKnowledgeBaseFlow = ai.defineFlow(
-
   {
     name: 'queryKnowledgeBaseFlow',
     inputSchema: QueryKnowledgeBaseInputSchema,
     outputSchema: QueryKnowledgeBaseOutputSchema,
   },
   async (input: QueryKnowledgeBaseInput) => {
-    
     const { query, sessions, cvDatabase, chatHistory, currentDate } = input;
-    
+
     // Create a summarized version of the data to pass to the prompt
     const knowledgeBase = {
-        assessmentSessions: sessions.map(session => ({
-            sessionId: session.id,
-            jobTitle: session.analyzedJd.JobTitle,
-            jobCode: session.analyzedJd.JobCode,
-            department: session.analyzedJd.Department,
-            jdName: session.jdName,
-            candidateCount: session.candidates.length,
-            candidates: session.candidates.map(c => ({
-                name: c.analysis.candidateName,
-                score: c.analysis.alignmentScore,
-                recommendation: c.analysis.recommendation,
-                strengths: c.analysis.strengths,
-                weaknesses: c.analysis.weaknesses,
-                cvContent: c.cvContent,
-            })),
+      assessmentSessions: sessions.map((session) => ({
+        sessionId: session.id,
+        jobTitle: session.analyzedJd.JobTitle,
+        jobCode: session.analyzedJd.JobCode,
+        department: session.analyzedJd.Department,
+        jdName: session.jdName,
+        candidateCount: session.candidates.length,
+        candidates: session.candidates.map((c) => ({
+          name: c.analysis.candidateName,
+          score: c.analysis.alignmentScore,
+          recommendation: c.analysis.recommendation,
+          strengths: c.analysis.strengths,
+          weaknesses: c.analysis.weaknesses,
+          cvContent: c.cvContent,
         })),
-        cvDatabase: cvDatabase.map(cv => ({
-            name: cv.name,
-            email: cv.email,
-            jobCode: cv.jobCode,
-            currentTitle: cv.currentTitle,
-            totalExperience: cv.totalExperience,
-            experienceCalculatedAt: cv.experienceCalculatedAt,
-            cvContent: cv.cvContent,
-            structuredContent: cv.structuredContent,
-        })),
+      })),
+      cvDatabase: cvDatabase.map((cv) => ({
+        name: cv.name,
+        email: cv.email,
+        jobCode: cv.jobCode,
+        currentTitle: cv.currentTitle,
+        totalExperience: cv.totalExperience,
+        experienceCalculatedAt: cv.experienceCalculatedAt,
+        cvContent: cv.cvContent,
+        structuredContent: cv.structuredContent,
+      })),
     };
 
-    const {output} = await withRetry(() => prompt({
+    const { output } = await withRetry(() =>
+      prompt({
         query: query,
         chatHistory: chatHistory,
         knowledgeBase,
         currentDate: currentDate,
-    }));
-    
+      })
+    );
+
     if (!output) {
-      throw new Error("The AI failed to generate a valid response (schema validation failed). Please try asking your question in a different way.");
+      throw new Error(
+        'The AI failed to generate a valid response (schema validation failed). Please try asking your question in a different way.'
+      );
     }
 
     return output;

@@ -1,6 +1,5 @@
-import type {Config} from 'tailwindcss';
-import { fontFamily } from "tailwindcss/defaultTheme"
-
+import type { Config } from 'tailwindcss';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
 export default {
   darkMode: ['class'],
@@ -12,14 +11,14 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "1rem",
+      padding: '1rem',
       screens: {
-        "2xl": "1400px",
+        '2xl': '1400px',
       },
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", ...fontFamily.sans],
+        sans: ['var(--font-inter)', ...fontFamily.sans],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -104,5 +103,3 @@ export default {
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
-
-    
