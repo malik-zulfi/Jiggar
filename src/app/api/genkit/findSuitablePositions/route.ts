@@ -6,11 +6,13 @@ import { CvDatabaseRecordSchema, AssessmentSessionSchema } from '@/lib/types';
 const findSuitablePositionsSchema = z.object({
   candidates: z.array(CvDatabaseRecordSchema),
   assessmentSessions: z.array(AssessmentSessionSchema),
-  existingSuitablePositions: z.array(z.object({
-    candidateEmail: z.string(),
-    candidateName: z.string(),
-    assessment: AssessmentSessionSchema,
-  })),
+  existingSuitablePositions: z.array(
+    z.object({
+      candidateEmail: z.string(),
+      candidateName: z.string(),
+      assessment: AssessmentSessionSchema,
+    })
+  ),
 });
 
 export async function POST(req: NextRequest) {

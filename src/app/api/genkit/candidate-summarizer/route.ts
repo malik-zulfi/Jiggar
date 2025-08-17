@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { summarizeCandidateAssessments } from '@/ai/flows/candidate-summarizer';
-import { CandidateAssessmentSchema, ExtractJDCriteriaOutputSchema } from '@/lib/types';
+import {
+  CandidateAssessmentSchema,
+  ExtractJDCriteriaOutputSchema,
+} from '@/lib/types';
 
 const summarizeCandidateSchema = z.object({
   jobDescriptionCriteria: ExtractJDCriteriaOutputSchema,
