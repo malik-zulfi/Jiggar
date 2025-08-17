@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import ErrorBoundary from '@/components/error-boundary';
 import { ClientProvider } from '@/components/client-provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -22,10 +23,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased bg-background text-foreground`}
       >
-        <ClientProvider>
-          {children}
-          <Toaster />
-        </ClientProvider>
+        <ErrorBoundary>
+          <ClientProvider>
+            {children}
+            <Toaster />
+          </ClientProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
