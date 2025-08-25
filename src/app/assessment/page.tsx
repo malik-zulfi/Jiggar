@@ -462,7 +462,7 @@ function AssessmentPage() {
   );
 
   useEffect(() => {
-    if (isLoading || hasProcessedPending.current) return;
+    if (isLoading === undefined || isLoading || hasProcessedPending.current) return;
 
     const processPendingAssessments = () => {
       const intendedSessionId = localStorage.getItem(
@@ -530,7 +530,18 @@ function AssessmentPage() {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [isLoading, setHistory, setActiveSessionId, processAndAnalyzeCandidates, toast, cvDatabase, setEmailPrompt, setNewCvProcessingStatus, setCvs, setCvResetKey]);
+  }, [
+    isLoading,
+    setHistory,
+    setActiveSessionId,
+    processAndAnalyzeCandidates,
+    toast,
+    cvDatabase,
+    setEmailPrompt,
+    setNewCvProcessingStatus,
+    setCvs,
+    setCvResetKey,
+  ]);
 
   const handleQuickAddToAssessment = useCallback(
     async (positions: SuitablePosition[]) => {
