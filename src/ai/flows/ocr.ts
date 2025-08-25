@@ -18,16 +18,6 @@ import { withRetry } from '@/lib/retry';
 
 export type { OcrInput, OcrOutput };
 
-/**
- * Performs Optical Character Recognition (OCR) on an image.
- * @param input - The input containing the image data.
- * @returns A promise that resolves to the OcrOutput.
- */
-export async function performOcr(input: OcrInput): Promise<OcrOutput> {
-  const performOcrFlow = await createOcrFlow();
-  return performOcrFlow(input);
-}
-
 const prompt = ai.definePrompt({
   name: 'ocrPrompt',
   input: { schema: OcrInputSchema },
@@ -42,18 +32,24 @@ Image:
 /**
  * Defines the Genkit flow for performing OCR.
  * This flow uses a prompt to extract text from a given image.
- * @returns A Genkit flow function.
  */
-export async function createOcrFlow() {
-  return ai.defineFlow(
-    {
-      name: 'performOcrFlow',
-      inputSchema: OcrInputSchema,
-      outputSchema: OcrOutputSchema,
-    },
-    async (input) => {
-      const { output } = await withRetry(() => prompt(input));
-      return output!;
-    }
-  );
+export const performOcrFlow = ai.defineFlow(
+  {
+    name: 'performOcrFlow',
+    inputSchema: OcrInputSchema,
+    outputSchema: OcrOutputSchema,
+  },
+  async (input) => {
+    const { output } = await withRetry(() => prompt(input));
+    return output!;
+  }
+);
+
+/**
+ * Performs Optical Character Recognition (OCR) on an image.
+ * @param input - The input containing the image data.
+ * @returns A promise that resolves to the OcrOutput.
+ */
+export async function performOcr(input: OcrInput): Promise<OcrOutput> {
+  return performOcrFlow(input);
 }
