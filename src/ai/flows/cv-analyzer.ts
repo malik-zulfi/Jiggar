@@ -52,20 +52,6 @@ export async function analyzeCVAgainstJD(
   return analyzeCVAgainstJDFlow(input);
 }
 
-/**
- * Converts a string to Title Case.
- * @param str - The input string.
- * @returns The string in Title Case.
- */
-function toTitleCase(str: string): string {
-  if (!str) return '';
-  return str
-    .toLowerCase()
-    .split(/["s-]+/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
 // We ask the AI for everything *except* the final recommendation, which we will calculate programmatically.
 const AIAnalysisOutputSchema = AnalyzeCVAgainstJDOutputSchema.omit({
   recommendation: true,
@@ -266,9 +252,7 @@ export async function createAnalyzeCVAgainstJDFlow() {
         candidateScore,
         maxScore,
         recommendation,
-        candidateName: toTitleCase(
-          input.parsedCv?.name || aiAnalysis.candidateName
-        ),
+        candidateName: input.parsedCv?.name || aiAnalysis.candidateName || '',
         email: input.parsedCv?.email || aiAnalysis.email,
         totalExperience:
           input.parsedCv?.totalExperience || aiAnalysis.totalExperience,

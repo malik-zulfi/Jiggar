@@ -66,7 +66,7 @@ const prompt = ai.definePrompt({
     Score: {{{alignmentScore}}}%
     Recommendation: {{{recommendation}}}
     Strengths: {{#each strengths}}{{{this}}}, {{/each}}
-    Weaknesses: {{#each weaknesses}}{{{this}}}, {{#each weaknesses}}{{{this}}}, {{/each}}
+    Weaknesses: {{#each weaknesses}}{{{this}}}, {{/each}}
     Interview Probes: {{#each interviewProbes}}{{{this}}}, {{/each}}
   {{/each}}
 

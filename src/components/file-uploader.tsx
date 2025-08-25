@@ -82,7 +82,10 @@ export default function FileUploader({
 
           let ocrContent = '';
           for (let i = 1; i <= pdf.numPages; i++) {
-            update({ id: toastId, description: `Processing page ${i} of ${pdf.numPages}...` });
+            update({
+              id: toastId,
+              description: `Processing page ${i} of ${pdf.numPages}...`,
+            });
             const page = await pdf.getPage(i);
             const viewport = page.getViewport({ scale: 1.5 });
 
@@ -105,7 +108,11 @@ export default function FileUploader({
             }
           }
           content = content + '\n\n' + ocrContent;
-          update({ id: toastId, title: 'OCR Complete', description: `Extracted text from ${pdf.numPages} pages.` });
+          update({
+            id: toastId,
+            title: 'OCR Complete',
+            description: `Extracted text from ${pdf.numPages} pages.`,
+          });
           setTimeout(() => dismiss(toastId), 5000);
         }
       } else if (fileExtension === 'docx') {

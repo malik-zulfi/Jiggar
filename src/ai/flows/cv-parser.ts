@@ -16,6 +16,15 @@ import {
 } from '@/lib/types';
 import { withRetry } from '@/lib/retry';
 
+function toTitleCase(str: string): string {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(/\s|-/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export type { ParseCvOutput };
 
 const cvCache = new Map<string, ParseCvOutput>();
@@ -90,6 +99,9 @@ export async function createParseCvFlow() {
         throw new Error(
           'CV parsing failed: The AI returned an empty or invalid response.'
         );
+      }
+      if (output.name) {
+        output.name = toTitleCase(output.name);
       }
       // We no longer throw an error if email is missing, but the frontend will handle it.
       return output;

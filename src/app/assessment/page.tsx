@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import {
@@ -132,6 +132,7 @@ function AssessmentPage() {
     setCvDatabase,
     suitablePositions,
     setSuitablePositions,
+    isLoading,
   } = useAppContext();
   const { toast } = useToast();
 
@@ -175,6 +176,8 @@ function AssessmentPage() {
     resolve: (email: string) => void;
     reject: (reason?: any) => void;
   } | null>(null);
+
+  const hasProcessedPending = useRef(false);
 
   const activeSession = useMemo(
     () => history.find((s) => s.id === activeSessionId),
@@ -459,6 +462,8 @@ function AssessmentPage() {
   );
 
   useEffect(() => {
+    if (isLoading || hasProcessedPending.current) return;
+
     const processPendingAssessments = () => {
       const intendedSessionId = localStorage.getItem(
         ACTIVE_SESSION_STORAGE_KEY
@@ -521,11 +526,11 @@ function AssessmentPage() {
     // Defer execution until after the initial render cycle is complete.
     const timer = setTimeout(() => {
       processPendingAssessments();
+      hasProcessedPending.current = true; // Mark as processed
     }, 0);
 
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoading, setHistory, setActiveSessionId, processAndAnalyzeCandidates, toast, cvDatabase, setEmailPrompt, setNewCvProcessingStatus, setCvs, setCvResetKey]);
 
   const handleQuickAddToAssessment = useCallback(
     async (positions: SuitablePosition[]) => {

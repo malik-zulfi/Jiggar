@@ -82,8 +82,13 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function DashboardPage() {
-  const { history, cvDatabase, setSuitablePositions, suitablePositions, isLoading } =
-    useAppContext();
+  const {
+    history,
+    cvDatabase,
+    setSuitablePositions,
+    suitablePositions,
+    isLoading,
+  } = useAppContext();
   const [filters, setFilters] = useState({ code: 'all', department: 'all' });
 
   const filteredHistory = useMemo(() => {
@@ -527,7 +532,9 @@ export default function DashboardPage() {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handleViewInTool(c.sessionId)}
+                                    onClick={() =>
+                                      handleViewInTool(c.sessionId)
+                                    }
                                   >
                                     View
                                   </Button>
@@ -588,7 +595,9 @@ export default function DashboardPage() {
                                 {session.candidates.length}
                               </TableCell>
                               <TableCell className="text-muted-foreground">
-                                {new Date(session.createdAt).toLocaleDateString()}
+                                {new Date(
+                                  session.createdAt
+                                ).toLocaleDateString()}
                               </TableCell>
                               <TableCell className="text-right">
                                 <Link href="/assessment" passHref>

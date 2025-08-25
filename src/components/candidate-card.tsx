@@ -189,7 +189,12 @@ export default function CandidateCard({
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <Button variant="outline" size="sm" onClick={onReassess} className="h-7 text-accent border-accent hover:bg-accent/10">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onReassess}
+                  className="h-7 text-accent border-accent hover:bg-accent/10"
+                >
                   Re-assess
                 </Button>
               </div>

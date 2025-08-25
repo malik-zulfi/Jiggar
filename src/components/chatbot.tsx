@@ -67,7 +67,8 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
 
     if (cvDatabase.length > 0) {
       const latestCv = cvDatabase.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0];
       questions.add(`Summarize the CV of ${latestCv.name}.`);
     }
