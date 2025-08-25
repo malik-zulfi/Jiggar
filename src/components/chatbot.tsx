@@ -45,6 +45,38 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const suggestedQuestions = useMemo(() => {
+    const questions = new Set<string>();
+
+    if (sessions.length > 0) {
+      const latestSession = sessions.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      if (latestSession.analyzedJd.JobTitle) {
+        questions.add(
+          `What are the must-have skills for the ${latestSession.analyzedJd.JobTitle} role?`
+        );
+      }
+      if (latestSession.candidates.length > 1) {
+        questions.add(
+          `Compare ${latestSession.candidates[0].analysis.candidateName} and ${latestSession.candidates[1].analysis.candidateName} for the ${latestSession.analyzedJd.JobTitle} role.`
+        );
+      }
+    }
+
+    if (cvDatabase.length > 0) {
+      const latestCv = cvDatabase.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      questions.add(`Summarize the CV of ${latestCv.name}.`);
+    }
+
+    questions.add('Which positions are currently open?');
+
+    return Array.from(questions).slice(0, 4);
+  }, [sessions, cvDatabase]);
+
   const initialMessage: ChatMessage = useMemo(
     () => ({
       role: 'assistant',
@@ -287,6 +319,26 @@ export default function Chatbot({ sessions, cvDatabase }: ChatbotProps) {
                   </div>
                 </div>
               ))}
+              {chatHistory.length === 1 && (
+                <div className="space-y-2 pt-2">
+                  <p className="text-xs font-semibold text-muted-foreground px-1">
+                    Suggested Questions
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedQuestions.map((q, i) => (
+                      <Button
+                        key={i}
+                        variant="outline"
+                        size="sm"
+                        className="h-auto text-left"
+                        onClick={() => setQuery(q)}
+                      >
+                        {q}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {isLoading && (
                 <div className="flex items-start gap-3 justify-start">
                   <div className="p-3 rounded-lg bg-muted flex items-center gap-2">

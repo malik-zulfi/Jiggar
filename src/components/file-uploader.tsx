@@ -28,7 +28,7 @@ export default function FileUploader({
   id,
   multiple = false,
 }: FileUploaderProps) {
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const [fileDisplayNames, setFileDisplayNames] = useState<string[]>([]);
   const [processingProgress, setProcessingProgress] = useState<{
@@ -75,13 +75,14 @@ export default function FileUploader({
         content = textContentAcc;
 
         if (content.trim().length < 10) {
-          toast({
+          const { id: toastId, update } = toast({
             title: 'Image-based PDF Detected',
             description: `Performing OCR on "${file.name}" to extract text. This may take a few moments...`,
           });
 
           let ocrContent = '';
           for (let i = 1; i <= pdf.numPages; i++) {
+            update({ id: toastId, description: `Processing page ${i} of ${pdf.numPages}...` });
             const page = await pdf.getPage(i);
             const viewport = page.getViewport({ scale: 1.5 });
 
@@ -104,6 +105,8 @@ export default function FileUploader({
             }
           }
           content = content + '\n\n' + ocrContent;
+          update({ id: toastId, title: 'OCR Complete', description: `Extracted text from ${pdf.numPages} pages.` });
+          setTimeout(() => dismiss(toastId), 5000);
         }
       } else if (fileExtension === 'docx') {
         const mammoth = await import('mammoth');

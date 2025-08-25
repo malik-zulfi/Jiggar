@@ -1,0 +1,111 @@
+Error: In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <Collapsible data-orientation="vertical" data-state="closed" __scopeCollapsible={{...}} className="last:borde..." ...>
+      <CollapsibleProvider scope={{...}} disabled={undefined} contentId="radix-«r1c»" open={false} ...>
+        <Primitive.div data-state="closed" data-disabled={undefined} data-orientation="vertical" ...>
+          <div data-state="closed" data-disabled={undefined} data-orientation="vertical" className="last:borde..." ...>
+            <AccordionHeader className="flex w-ful...">
+              <Primitive.h3 data-orientation="vertical" data-state="closed" data-disabled={undefined} ...>
+                <h3 data-orientation="vertical" data-state="closed" data-disabled={undefined} className="flex w-ful..." ...>
+                  <div>
+                  <_c2 className="flex flex-...">
+                    <AccordionTrigger ref={null} className={"[&[data-..."}>
+                      <AccordionCollectionItemSlot scope={undefined}>
+                        <AccordionCollectionItemSlot.Slot data-radix-collection-item="" ref={function}>
+                          <AccordionCollectionItemSlot.SlotClone data-radix-collection-item="" ref={function}>
+                            <CollapsibleTrigger aria-disabled={undefined} data-orientation="vertical" id="radix-«r1b»" ...>
+                              <Primitive.button type="button" aria-controls="radix-«r1c»" aria-expanded={false} ...>
+>                               <button
+>                                 type="button"
+>                                 aria-controls="radix-«r1c»"
+>                                 aria-expanded={false}
+>                                 data-state="closed"
+>                                 data-disabled={undefined}
+>                                 disabled={undefined}
+>                                 aria-disabled={undefined}
+>                                 data-orientation="vertical"
+>                                 id="radix-«r1b»"
+>                                 className={"[&[data-state=open]>svg]:rotate-180 flex flex-1 items-center justify-be..."}
+>                                 data-radix-collection-item=""
+>                                 onClick={function handleEvent}
+>                                 ref={function}
+>                               >
+                                  <div className="flex items...">
+                                    <span>
+                                    <Badge>
+                                    <Badge>
+                                    <div className="flex items...">
+                                      <TooltipProvider>
+                                      <_c variant="outline" size="sm" onClick={function onReassess} ...>
+>                                       <button
+>                                         className={"inline-flex items-center justify-center gap-2 whitespace-nowrap..."}
+>                                         ref={null}
+>                                         onClick={function onReassess}
+>                                       >
+                                    ...
+                                  ...
+                  ...
+            ...
+
+    at createConsoleError (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js:882:71)
+    at handleConsoleError (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js:1058:54)
+    at console.error (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js:1223:57)
+    at validateDOMNesting (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:4095:372)
+    at completeWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:8368:25)
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:3073:74)
+    at completeUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10308:23)
+    at performUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10245:28)
+    at workLoopSync (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10135:40)
+    at renderRootSync (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10118:13)
+    at performWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:9853:212)
+    at performSyncWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10834:9)
+    at flushSyncWorkAcrossRoots_impl (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10754:316)
+    at processRootScheduleInMicrotask (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10774:106)
+    at http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10845:158
+    at button (<anonymous>)
+    at _c (http://localhost:3000/_next/static/chunks/src_c45fa364._.js:764:214)
+    at CandidateCard (http://localhost:3000/_next/static/chunks/src_854a8c05._.js?id=%255Bproject%255D%252Fsrc%252Fcomponents%252Fcandidate-card.tsx+%255Bapp-client%255D+%2528ecmascript%2529:288:243)
+    at http://localhost:3000/_next/static/chunks/src_854a8c05._.js:10135:306
+    at Array.map (<anonymous>)
+    at AssessmentPage (http://localhost:3000/_next/static/chunks/src_854a8c05._.js:10135:92)
+    at ClientPageRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_1a6ee436._.js:2061:50)
+
+    --------------------------------------
+
+
+    Error: <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+    at createConsoleError (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js:882:71)
+    at handleConsoleError (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js:1058:54)
+    at console.error (http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js:1223:57)
+    at http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:4097:21
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:3073:74)
+    at validateDOMNesting (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:4096:178)
+    at completeWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:8368:25)
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:3073:74)
+    at completeUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10308:23)
+    at performUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10245:28)
+    at workLoopSync (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10135:40)
+    at renderRootSync (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10118:13)
+    at performWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:9853:212)
+    at performSyncWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10834:9)
+    at flushSyncWorkAcrossRoots_impl (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10754:316)
+    at processRootScheduleInMicrotask (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10774:106)
+    at http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js:10845:158
+    at button (<anonymous>)
+    at Primitive.button (http://localhost:3000/_next/static/chunks/node_modules_%40radix-ui_06edcdfc._.js:1045:210)
+    at CollapsibleTrigger (http://localhost:3000/_next/static/chunks/node_modules_3eb2fd7d._.js:75:206)
+    at AccordionTrigger (http://localhost:3000/_next/static/chunks/node_modules_3eb2fd7d._.js:501:213)
+    at AccordionCollectionItemSlot.Slot (http://localhost:3000/_next/static/chunks/node_modules_%40radix-ui_06edcdfc._.js:242:210)
+    at AccordionCollectionItemSlot (http://localhost:3000/_next/static/chunks/node_modules_%40radix-ui_06edcdfc._.js:409:210)
+    at AccordionTrigger (http://localhost:3000/_next/static/chunks/node_modules_3eb2fd7d._.js:499:206)
+    at _c2 (http://localhost:3000/_next/static/chunks/src_854a8c05._.js:37:467)
+    at CandidateCard (http://localhost:3000/_next/static/chunks/src_854a8c05._.js:4547:223)
+    at http://localhost:3000/_next/static/chunks/src_854a8c05._.js:10135:306
+    at Array.map (<anonymous>)
+    at AssessmentPage (http://localhost:3000/_next/static/chunks/src_854a8c05._.js:10135:92)
+    at ClientPageRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_1a6ee436._.js:2061:50)
+
+    

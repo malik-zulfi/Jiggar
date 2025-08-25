@@ -41,6 +41,7 @@ interface AppContextType {
   runGlobalRelevanceCheck: () => Promise<void>;
   manualCheckStatus: 'idle' | 'loading' | 'done';
   handleBulkImport: (data: ImportedData, mode: ImportMode) => void;
+  isLoading: boolean;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -277,6 +278,7 @@ export function ClientProvider({
     runGlobalRelevanceCheck,
     manualCheckStatus,
     handleBulkImport,
+    isLoading,
   };
 
   if (isLoading) {

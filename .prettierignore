@@ -4,3 +4,68 @@ node_modules
 
 # Ignore generated files:
 package-lock.json
+
+# Ignore virtual environments:
+.venv
+
+# Ignore IDE files:
+.idea
+.vscode
+
+# Ignore backup files:
+jiggar_backup_2025-08-14.json
+
+# Ignore log files:
+*.log
+
+# Ignore OS-specific files:
+.DS_Store
+
+# Ignore build artifacts:
+build
+dist
+
+# Ignore environment variables:
+.env.local
+.env.*.local
+
+# Ignore debug logs:
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore deployment files:
+.vercel
+
+# Ignore python files:
+.python-version
+*.pyc
+__pycache__
+.pytest_cache
+.mypy_cache
+.tox
+.coverage
+htmlcov
+instance
+.webassets-cache
+.flask_cache
+celerybeat-schedule
+db.sqlite3
+media
+static_root
+staticfiles
+*.mo
+*.po
+*.egg-info
+.env
+.cache
+.settings
+.project
+.pydevproject
+local_settings.py
+*.swp
+*~
+*.bak
+*.tmp
+*.orig
+*#

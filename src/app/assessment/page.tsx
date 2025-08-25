@@ -848,6 +848,11 @@ function AssessmentPage() {
     setSelectedCandidates(new Set());
   };
 
+  const handleReassessCandidate = async (candidate: CandidateRecord) => {
+    if (!activeSession || !activeSession.analyzedJd) return;
+    await reAssessCandidates(activeSession.analyzedJd, [candidate]);
+  };
+
   const handleAnalyzeCvs = async () => {
     if (cvs.length === 0) {
       toast({
@@ -1830,6 +1835,7 @@ function AssessmentPage() {
                                 handleDeleteCandidate(c.analysis.candidateName)
                               }
                               onEdit={() => setEditingCandidate(c)}
+                              onReassess={() => handleReassessCandidate(c)}
                               isEdited={c.analysis.isEdited}
                             />
                           ))}

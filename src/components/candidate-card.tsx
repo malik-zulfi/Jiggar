@@ -40,6 +40,7 @@ interface CandidateCardProps {
   onToggleSelect: () => void;
   onDelete: () => void;
   onEdit: () => void;
+  onReassess: () => void;
   isEdited?: boolean;
 }
 
@@ -87,6 +88,7 @@ export default function CandidateCard({
   onToggleSelect,
   onDelete,
   onEdit,
+  onReassess,
   isEdited,
 }: CandidateCardProps) {
   const analysis = candidate.analysis;
@@ -174,18 +176,23 @@ export default function CandidateCard({
               </Badge>
             )}
             {isStale && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center justify-center h-full">
-                      <RefreshCw className="h-4 w-4 text-accent animate-pulse" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>JD has changed. Re-assess for an updated score.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center justify-center h-full">
+                        <RefreshCw className="h-4 w-4 text-accent animate-pulse" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>JD has changed. Re-assess for an updated score.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <Button variant="outline" size="sm" onClick={onReassess} className="h-7 text-accent border-accent hover:bg-accent/10">
+                  Re-assess
+                </Button>
+              </div>
             )}
             {analysis.processingTime && (
               <Badge

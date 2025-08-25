@@ -157,7 +157,7 @@ const RequirementItem = ({
     <li
       className={cn(
         'flex items-center gap-2 md:gap-4 justify-between p-2 rounded-md hover:bg-background/50',
-        isModified && 'ring-1 ring-amber-500/50 bg-amber-50/20'
+        isModified && 'ring-1 ring-amber-500/50 bg-amber-100/50'
       )}
     >
       <div className="flex items-start gap-2 flex-1">
